@@ -37,11 +37,22 @@ collapseRecords <- function(x,
   }
 
   if (omopgenerics::isTableEmpty(x)) {
-    return(
-      x |>
-        dplyr::select(dplyr::all_of(c(by, startDate, endDate))) |>
-        dplyr::compute(name = name)
-    )
+    x <- x |>
+      dplyr::select(dplyr::all_of(c(by, startDate, endDate))) |>
+      dplyr::compute(name = name)
+    return(x)
+  }
+
+  if (is.infinite(gap)) {
+    x <- x |>
+      dplyr::group_by(dplyr::across(dplyr::all_of(by))) |>
+      dplyr::summarise(
+        !!startDate := min(.data[[startDate]], na.rm = TRUE),
+        !!endDate := max(.data[[endDate]], na.rm = TRUE),
+        .groups = "drop"
+      ) |>
+      dplyr::compute(name = name)
+    return(x)
   }
 
   # get unique ids
@@ -54,12 +65,14 @@ collapseRecords <- function(x,
   # id[5] -> era_id (number of era)
 
   # start dates
+  sel <- rlang::set_names(c(by, startDate), c(by, id[1]))
   start <- x |>
-    dplyr::select(dplyr::all_of(c(by, !!id[1] := startDate))) |>
+    dplyr::select(dplyr::all_of(sel)) |>
     dplyr::mutate(!!id[2] := -1L)
   # end dates
+  sel <- rlang::set_names(c(by, endDate), c(by, id[1]))
   end <- x |>
-    dplyr::select(dplyr::all_of(c(by, !!id[1] := endDate))) |>
+    dplyr::select(dplyr::all_of(sel)) |>
     dplyr::mutate(!!id[2] := 1L)
 
   # add gap
