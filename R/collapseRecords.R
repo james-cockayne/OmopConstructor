@@ -45,7 +45,7 @@ collapseRecords <- function(x,
   }
 
   # get unique ids
-  ids <- omopgenerics::uniqueId(n = 5, exclude = c(by, startDate, endDate))
+  id <- omopgenerics::uniqueId(n = 5, exclude = c(by, startDate, endDate))
   # this is so any name of column can be used in by, startdate or endDate
   # id[1] -> date
   # id[2] -> date_id (-1 start; 1 end)

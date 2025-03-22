@@ -1,3 +1,5 @@
 
-
-src <- CDMConnector::dbSource(con = duckdb::dbConnect(), writeSchema = "main")
+src <- CDMConnector::dbSource(
+  con = duckdb::dbConnect(duckdb::duckdb()),
+  writeSchema = "main"
+)

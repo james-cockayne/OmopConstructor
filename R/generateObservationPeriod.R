@@ -96,8 +96,8 @@ generateObservationPeriod <- function(cdm,
   return(cdm)
 }
 getTemptativeDates <- function(cdm, tables, collapse, window, name) {
-  if (is.infinite(collapseEra)) {
-    if (is.infinite(persistenceWindow)) {
+  if (is.infinite(collapse)) {
+    if (is.infinite(window)) {
       end <- FALSE
     } else {
       end <- TRUE
@@ -155,8 +155,14 @@ getTemptativeDates <- function(cdm, tables, collapse, window, name) {
     x <- x |>
       collapseRecords(
         startDate = "start_date", endDate = "end_date", by = "person_id",
-        gap = 0L, name = name
+        gap = collapse, name = name
       )
+  }
+  if (!is.infinite(window)) {
+    x <- x |>
+      dplyr::mutate(end_date = as.Date(clock::add_days(
+        .data$end_date, .env$window
+      )))
   }
   x
 }
