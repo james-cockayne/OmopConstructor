@@ -45,6 +45,17 @@ generateObservationPeriod <- function(cdm,
 
   if (length(recordsFrom) == 0) {
     # return empty
+    op <- dplyr::tibble(
+      observation_period_id = integer(),
+      person_id = integer(),
+      observation_period_start_date = as.Date(character()),
+      observation_period_end_date = as.Date(character()),
+      period_type_concept_id = integer()
+    )
+    cdm <- omopgenerics::insertTable(
+      cdm = cdm, name = "observation_period", table = op
+    )
+    return(cdm)
   }
 
   name <- omopgenerics::uniqueTableName()
@@ -64,13 +75,29 @@ generateObservationPeriod <- function(cdm,
       ))
   }
 
+  # censor at death
+  if ("death" %in% names(cdm)) {
+    x <- x |>
+      dplyr::left_join(
+        cdm$death |>
+          dplyr::select("person_id", "death_date"),
+        by = "person_id"
+      ) |>
+      dplyr::mutate(end_date = dplyr::case_when(
+        is.na(.data$death_date) ~ .data$end_date,
+        .data$death_date < .data$end_date ~ .data$death_date,
+        .default = .data$end_date
+      )) |>
+      dplyr::select(!"death_date")
+  }
+
   # censor at censorAge
   x <- x |>
     PatientProfiles::addDateOfBirthQuery(dateOfBirthName = "date_of_birth") |>
     dplyr::mutate(
-      age_date = clock::add_days(
+      age_date = as.Date(clock::add_days(
         clock::add_years(.data$date_of_birth, .env$censorAge), -1L
-      ),
+      )),
       end_date = dplyr::if_else(
         .data$age_date <= .data$end_date, .data$age_date, .data$end_date
       )
@@ -78,9 +105,9 @@ generateObservationPeriod <- function(cdm,
 
   # filter censor < start_date
   cdm$observation_period <- x |>
-    dplyr::filter(.data$start_date >= .data$end_date) |>
+    dplyr::filter(.data$start_date <= .data$end_date) |>
     dplyr::mutate(
-      observation_period_id = dplyr::row_number(),
+      observation_period_id = as.integer(dplyr::row_number()),
       period_type_concept_id = 0L
     ) |>
     dplyr::select(
@@ -97,14 +124,10 @@ generateObservationPeriod <- function(cdm,
 }
 getTemptativeDates <- function(cdm, tables, collapse, window, name) {
   if (is.infinite(collapse)) {
-    if (is.infinite(window)) {
-      end <- FALSE
-    } else {
-      end <- TRUE
-    }
+    end <- !is.infinite(window)
     q <- c(
       "min(as.Date(.data[['{startDate}']]), na.rm = TRUE)",
-      "min(dplyr::coalesce(as.Date(.data[['{endDate}']]), as.Date(.data[['{startDate}']])), na.rm = TRUE)"
+      "max(dplyr::coalesce(as.Date(.data[['{endDate}']]), as.Date(.data[['{startDate}']])), na.rm = TRUE)"
     ) |>
       rlang::set_names(c("start_date", "end_date"))
     q <- q[c(TRUE, end)]
@@ -117,21 +140,28 @@ getTemptativeDates <- function(cdm, tables, collapse, window, name) {
       table <- tables[k]
       startDate <- omopgenerics::omopColumns(table = table, field = "start_date")
       endDate <- omopgenerics::omopColumns(table = table, field = "end_date")
-      qs <- glue::glue(q, startDate = startDate, endDate = endDate) |>
+      qs <- q |>
+        purrr::map_chr(\(x) {
+          glue::glue(x, startDate = startDate, endDate = endDate)
+        }) |>
         rlang::parse_exprs()
       xk <- cdm[[table]] |>
         dplyr::group_by(.data$person_id) |>
         dplyr::summarise(!!!qs, .groups = "drop") |>
         dplyr::compute(name = nm)
       if (k == 1) {
-        x <- xk
+        x <- xk |>
+          dplyr::compute(name = name)
       } else {
-        qq <- glue::glue(q, startDate = "start_date", endDate = "end_date") |>
+        qq <- q |>
+          purrr::map_chr(\(x) {
+            glue::glue(x, startDate = "start_date", endDate = "end_date")
+          }) |>
           rlang::parse_exprs()
         x <- x |>
           dplyr::union_all(xk) |>
           dplyr::group_by(.data$person_id) |>
-          dplyr::summarise(!!!qs, .groups = "drop") |>
+          dplyr::summarise(!!!qq, .groups = "drop") |>
           dplyr::compute(name = name)
       }
     }
@@ -153,6 +183,9 @@ getTemptativeDates <- function(cdm, tables, collapse, window, name) {
       }
     }
     x <- x |>
+      dplyr::mutate(
+        end_date = dplyr::coalesce(.data$end_date, .data$start_date)
+      ) |>
       collapseRecords(
         startDate = "start_date", endDate = "end_date", by = "person_id",
         gap = collapse, name = name

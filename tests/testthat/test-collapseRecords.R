@@ -1,6 +1,6 @@
 test_that("Test collapse records", {
   cdm <- omopgenerics::emptyCdmReference(cdmName = "test") |>
-    omopgenerics::insertCdmTo(to = src)
+    omopgenerics::insertCdmTo(to = newSrc())
 
   # simple example
   x <- dplyr::tibble(
@@ -189,4 +189,7 @@ test_that("Test collapse records", {
       end_date = as.Date(character())
     )
   )
+
+  omopgenerics::dropSourceTable(cdm = cdm, dplyr::everything())
+  omopgenerics::cdmDisconnect(cdm = cdm)
 })
