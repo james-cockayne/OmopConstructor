@@ -11,7 +11,8 @@ What the package does (one paragraph).
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://oxford-pharmacoepi.github.io/OmopConstructor/}
+  \item \url{https://OHDSI.io/OmopConstructor/}
+  \item Report bugs at \url{https://github.com/OHDSI/OmopConstructor/issues}
 }
 
 }

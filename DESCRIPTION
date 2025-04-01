@@ -28,4 +28,5 @@ Suggests:
     duckdb,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-URL: https://oxford-pharmacoepi.github.io/OmopConstructor/
+URL: https://OHDSI.io/OmopConstructor/
+BugReports: https://github.com/OHDSI/OmopConstructor/issues
