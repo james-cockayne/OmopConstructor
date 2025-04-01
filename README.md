@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/oxford-pharmacoepi/OmopConstructor/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/oxford-pharmacoepi/OmopConstructor/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/OHDSI/OmopConstructor/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/OHDSI/OmopConstructor/actions/workflows/R-CMD-check.yaml)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/OmopConstructor)](https://CRAN.R-project.org/package=OmopConstructor)
 [![Lifecycle:
@@ -21,5 +21,5 @@ You can install the development version of OmopConstructor from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("oxford-pharmacoepi/OmopConstructor")
+devtools::install_github("OHDSI/OmopConstructor")
 ```
