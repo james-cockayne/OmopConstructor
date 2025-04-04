@@ -45,6 +45,19 @@ buildAchillesTables <- function(cdm,
     cdm <- appendAchillesId(cdm, id)
   }
 
+  # append to achilles_analysis
+  name <- omopgenerics::uniqueTableName()
+  cdm <- omopgenerics::insertTable(
+    cdm = cdm,
+    name = name,
+    table = OmopConstructor::achillesAnalisisDetails |>
+      dplyr::filter(.data$analysis_id %in% .env$achillesId)
+  )
+  cdm[["achilles_analysis"]] <- cdm[["achilles_analysis"]] |>
+    dplyr::union_all(cdm[[name]]) |>
+    dplyr::compute(name = "achilles_analysis")
+  cdm <- omopgenerics::dropSourceTable(cdm = cdm, name = name)
+
   return(cdm)
 }
 
@@ -113,25 +126,14 @@ removeRepeatedIds <- function(cdm, achillesId) {
 }
 appendAchillesId <- function(cdm, id) {
 
-  # append to achilles_analysis
-  name <- omopgenerics::uniqueTableName()
-  cdm <- omopgenerics::insertTable(
-    cdm = cdm,
-    name = name,
-    table = OmopConstructor::achillesAnalisisDetails |>
-      dplyr::filter(.data$analysis_id == .env$id)
-  )
-  cdm[["achilles_analysis"]] <- cdm[["achilles_analysis"]] |>
-    dplyr::union_all(cdm[[name]]) |>
-    dplyr::compute(name = "achilles_analysis")
-  cdm <- omopgenerics::dropSourceTable(cdm = cdm, name = name)
-
   # get analysis results
   analysis <- achillesAnalisisInternal |>
     dplyr::filter(.data$analysis_id == .env$id)
   type <- analysis$type
   if (identical(type, "count")) {
     cdm <- getCounts(cdm, analysis)
+  } else if (identical(type, "person_count")) {
+    cdm <- getPersonCounts(cdm, analysis)
   }
 
   return(cdm)
@@ -155,7 +157,7 @@ mutateColumns <- function(analysis) {
 }
 getCounts <- function(cdm,
                       analysis) {
-  tableName <- snakecase::to_snake_case(analysis$category)
+  tableName <- snakecase::to_snake_case(analysis$table)
   by <- groupBy(analysis)
   mut <- mutateColumns(analysis)
 
@@ -163,6 +165,27 @@ getCounts <- function(cdm,
   res <- cdm[[tableName]] |>
     dplyr::group_by(dplyr::across(dplyr::all_of(by))) |>
     dplyr::summarise(count_value = as.integer(dplyr::n())) |>
+    dplyr::mutate(!!!mut, analysis_id = !!analysis$analysis_id) |>
+    dplyr::compute(name = nm)
+
+  cdm[["achilles_results"]] <- cdm[["achilles_results"]] |>
+    dplyr::union_all(res) |>
+    dplyr::compute(name = "achilles_results")
+
+  omopgenerics::dropSourceTable(cdm = cdm, name = nm)
+
+  return(cdm)
+}
+getPersonCounts <- function(cdm,
+                            analysis) {
+  tableName <- snakecase::to_snake_case(analysis$table)
+  by <- groupBy(analysis)
+  mut <- mutateColumns(analysis)
+
+  nm <- omopgenerics::uniqueTableName()
+  res <- cdm[[tableName]] |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(by))) |>
+    dplyr::summarise(count_value = as.integer(dplyr::n_distinct(.data$person_id))) |>
     dplyr::mutate(!!!mut, analysis_id = !!analysis$analysis_id) |>
     dplyr::compute(name = nm)
 
