@@ -12,3 +12,14 @@ achillesAnalisisDetails <- readr::read_csv(
   dplyr::rename_all(tolower)
 
 usethis::use_data(achillesAnalisisDetails, overwrite = TRUE)
+
+achillesAnalisisInternal <- achillesAnalisisDetails |>
+  dplyr::mutate(type = dplyr::case_when(
+    .data$analysis_id %in% c(1:5, 10, 12) ~ "count",
+    .data$analysis_id == 7L ~ "invalid:provider_id",
+    .data$analysis_id == 8L ~ "invalid:provider_id",
+    .data$analysis_id == 9L ~ "invalid:provider_id",
+    .data$analysis_id == 11L ~ "not_deceased",
+  ))
+
+usethis::use_data(achillesAnalisisInternal, overwrite = TRUE, internal = TRUE)

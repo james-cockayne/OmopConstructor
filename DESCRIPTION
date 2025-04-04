@@ -20,6 +20,8 @@ Imports:
     PatientProfiles,
     purrr,
     rlang,
+    snakecase,
+    stringr,
     tidyr
 Depends: 
     R (>= 4.1)
