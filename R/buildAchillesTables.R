@@ -62,21 +62,29 @@ buildAchillesTables <- function(cdm,
 }
 
 validateAchillesId <- function(achillesId, call = parent.frame()) {
+  # possible ids
+  possibleIds <- achillesAnalisisInternal$analysis_id
+  allIds <- OmopConstructor::achillesAnalisisDetails$analysis_id
+
   # default analysis_id
   if (is.null(achillesId)) {
-    ids <- OmopConstructor::achillesAnalisisDetails |>
+    achillesId <- OmopConstructor::achillesAnalisisDetails |>
       dplyr::filter(.data$is_default == 1L) |>
       dplyr::pull("analysis_id")
-    return(ids)
+  } else {
+    achillesId <- as.integer(achillesId)
+    omopgenerics::assertNumeric(achillesId, integerish = TRUE, unique = TRUE, call = call)
+    notIds <- achillesId[!achillesId %in% allIds]
+    if (length(noIds) > 0) {
+      cli::cli_inform(c("!" = "{length(notIds)} analysis id{?s} {?is/are} not valid: {notIds}."))
+    }
+    notConfigured <- achillesId[!achillesId %in% possibleIds & achillesId %in% allIds]
+    if (length(notConfigured) > 0) {
+      cli::cli_inform(c("i" = "{length(notConfigured)} analysis id{?s} {?is/are} not configured: {notConfigured}."))
+    }
   }
 
-  # check is in choices
-  achillesId <- as.integer(achillesId)
-  ids <- OmopConstructor::achillesAnalisisDetails |>
-    dplyr::pull("analysis_id")
-  omopgenerics::assertChoice(achillesId, choices = ids, unique = TRUE, call = call)
-
-  return(achillesId)
+  achillesId[achillesId %in% possibleIds]
 }
 checkExistentAchillesTables <- function(cdm) {
   notPresent <- omopgenerics::achillesTables() |>
