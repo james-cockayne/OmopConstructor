@@ -88,7 +88,7 @@ OmopSketch::plotObservationPeriod(OmopSketch::summariseObservationPeriod(cdm$obs
 
 Another option is to have people only be under observation during primary care or hospital visits. This would result in most people having multiple observation periods, with each period duration being relatively short. 
 
-This is not a good option to use if you want to calculate incidence or prevalence, as it will result in an unrealiable denominator.
+This is not a good option to use if you want to calculate incidence or prevalence, as it will result in an unreliable denominator.
 
 ```{r, default}
 cdm <- generateObservationPeriod(
