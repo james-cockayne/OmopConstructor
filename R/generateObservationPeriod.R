@@ -199,5 +199,3 @@ getTemptativeDates <- function(cdm, tables, collapse, window, name) {
   }
   x
 }
-
-

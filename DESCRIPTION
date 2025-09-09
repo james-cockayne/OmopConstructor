@@ -25,8 +25,18 @@ Depends:
     R (>= 4.1)
 Suggests: 
     CDMConnector,
+    CodelistGenerator,
+    DBI,
+    DrugUtilisation,
     duckdb,
-    testthat (>= 3.0.0)
+    ggplot2,
+    IncidencePrevalence,
+    knitr,
+    OmopSketch,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    visOmopResults
 Config/testthat/edition: 3
 URL: https://OHDSI.io/OmopConstructor/
 BugReports: https://github.com/OHDSI/OmopConstructor/issues
+VignetteBuilder: knitr
