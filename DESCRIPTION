@@ -24,6 +24,7 @@ Imports:
 Depends: 
     R (>= 4.1)
 Suggests: 
+    bookdown,
     CDMConnector,
     CodelistGenerator,
     DBI,
