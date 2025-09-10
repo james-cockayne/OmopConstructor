@@ -24,14 +24,17 @@ Imports:
 Depends: 
     R (>= 4.1)
 Suggests: 
+    bookdown,
     CDMConnector,
     CodelistGenerator,
     DBI,
     DrugUtilisation,
     duckdb,
     ggplot2,
+    gt,
     IncidencePrevalence,
     knitr,
+    omock,
     OmopSketch,
     rmarkdown,
     testthat (>= 3.0.0),
