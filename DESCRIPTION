@@ -31,6 +31,7 @@ Suggests:
     DrugUtilisation,
     duckdb,
     ggplot2,
+    gt,
     IncidencePrevalence,
     knitr,
     omock,
