@@ -52,7 +52,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = 0L,
     persistenceWindow = 0L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = "visit_occurrence"
   )
   expect_equal(
@@ -70,7 +70,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = 0L,
     persistenceWindow = 0L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -88,7 +88,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = 0L,
     persistenceWindow = 0L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("condition_occurrence", "death")
   )
   expect_equal(
@@ -108,7 +108,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = 0L,
     persistenceWindow = 0L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -126,7 +126,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = 4L,
     persistenceWindow = 0L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -144,7 +144,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = 5L,
     persistenceWindow = 0L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -164,7 +164,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = 4L,
     persistenceWindow = 3L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -182,7 +182,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = Inf,
     persistenceWindow = 20L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -202,7 +202,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = Inf,
     persistenceWindow = Inf,
     censorDate = as.Date("2000-01-01") + 3000L,
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -220,7 +220,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = Inf,
     persistenceWindow = 930,
     censorDate = as.Date("2000-01-01") + 1000L,
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -238,7 +238,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = Inf,
     persistenceWindow = Inf,
     censorDate = as.Date("2000-01-01") + 50L,
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(

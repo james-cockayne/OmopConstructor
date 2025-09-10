@@ -17,7 +17,7 @@ generateObservationPeriod <- function(cdm,
                                       collapseEra = Inf,
                                       persistenceWindow = Inf,
                                       censorDate = Sys.time(),
-                                      censorAge = 150L,
+                                      censorAge = 120L,
                                       recordsFrom = c(
                                         "drug_exposure", "condition_occurrence",
                                         "procedure_occurrence",
@@ -191,7 +191,7 @@ getTemptativeDates <- function(cdm, tables, collapse, window, name) {
         gap = collapse, name = name
       )
   }
-  if (!is.infinite(window)) {
+  if (!is.infinite(window) & window > 0) {
     x <- x |>
       dplyr::mutate(end_date = as.Date(clock::add_days(
         .data$end_date, .env$window

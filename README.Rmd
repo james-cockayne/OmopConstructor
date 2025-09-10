@@ -21,14 +21,53 @@ knitr::opts_chunk$set(
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
 
-The goal of OmopConstructor is to ...
+**OmopConstructor** is a package that contains functionality to construct standardised tables from health care data formatted according to the Observational Medical Outcomes Partnership Common Data Model ([OMOP CDM](https://ohdsi.github.io/CommonDataModel/)). The package includes tools to build key tables such as observation period and drug era, among others.
 
 ## Installation
 
-You can install the development version of OmopConstructor from [GitHub](https://github.com/) with:
+You can install OmopConstructor from cran using:
 
-``` {r, eval=FALSE}
-# install.packages("devtools")
-devtools::install_github("OHDSI/OmopConstructor")
+```{r, eval=FALSE}
+install.packages("OmopConstructor")
 ```
 
+Or, you can install the development version of OmopConstructor from [GitHub](https://github.com/) with:
+
+``` {r, eval=FALSE}
+# install.packages("pak")
+pak::pkg_install("ohdsi/OmopConstructor")
+```
+
+## Main functionality
+
+Currently **OmopConstructor** main functionalities are:
+
+- [`generateObservationPeriod()`](https://ohdsi.github.io/OmopConstructor/reference/generateObservationPeriod.html) to generate observation periods based on the data already in the `cdm` object.
+
+### Building observation periods
+
+You can generate the observation period table directly from the data contained in the `cdm` object, which is particularly useful for creating custom observation periods on a study-by-study basis. In this example, the observation period is defined as one record per person, starting from the first available observation in the data and ending at the earliest of the following: (1) a recorded death, (2) reaching 120 years of age, or (3) the extraction date (here, set to 01-01-2010).
+
+```{r}
+library(omock)
+library(OmopConstructor)
+
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
+
+cdm <- generateObservationPeriod(cdm = cdm,
+                                 collapseEra = Inf,
+                                 persistenceWindow = Inf, 
+                                 censorDate = as.Date("2010-01-01"), 
+                                 censorAge = 120)
+cdm
+```
+
+We can use *OmopSketch* to visualise the characteristics of the new observation period table that we have built:
+
+```{r}
+library(OmopSketch)
+
+result <- summariseObservationPeriod(observationPeriod = cdm$observation_period)
+
+tableObservationPeriod(result = result)
+```
