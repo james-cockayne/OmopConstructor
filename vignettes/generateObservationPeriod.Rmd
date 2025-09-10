@@ -47,10 +47,59 @@ In this vignette we will cover how to build different definitions of the `observ
 To show how the different observation period would be defined we will consider a toy example with only 3 records of visits (in `visit_occurrence`) and 5 records of drugs (in `drug_exposure`) those records are repsented in Figure \@ref(fig:fig-example), in blue we can see the visit records and in green the drug records.
 
 ```{r fig-example, fig.cap="Representation of a synthetic patient records.", echo=FALSE}
-library(ggplot2)
+dob <- as.Date("2003-04-19")
+x <- dplyr::tibble(
+  start = 5800 + c(0, 365, 800, 5, 85, 150, 365, 810, 825),
+  end = start + c(90, 120, 30, 30, 60, 60, 150, 10, 65),
+  colour = factor(c(rep("visit_occurrence", 3), rep("drug_exposure", 6)), levels = c("visit_occurrence", "drug_exposure"))
+) |>
+  dplyr::mutate(
+    start = dob + start,
+    end = dob + end, 
+    id = dplyr::row_number(),
+    y = dplyr::if_else(colour == "visit_occurrence", 1.5, 1)
+  ) |>
+  tidyr::pivot_longer(cols = c("start", "end"), values_to = "x")
 
-ggplot(mpg, aes(displ, hwy)) +
-  geom_point()
+ggplot2::ggplot(data = x, mapping = ggplot2::aes(x = x, y = y, group = id, colour = colour)) +
+  ggplot2::geom_line(linewidth = 2) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    axis.title.y = ggplot2::element_blank(),
+    axis.text.y = ggplot2::element_blank(),
+    axis.ticks.y = ggplot2::element_blank(),
+    legend.title = ggplot2::element_blank(),
+    legend.position = "top",
+    axis.line.x = ggplot2::element_blank()
+  ) +
+  ggplot2::scale_x_date(
+    name = "Time",
+    breaks = as.Date(c("2018-07-01", "2019-01-01", "2019-07-01", "2020-01-01", "2020-07-01", "2021-01-01", "2021-07-01", "2022-01-01")), 
+    labels = c(dob, "2019-01-01", "2019-07-01", "2020-01-01", "2020-07-01", "2021-01-01", "2021-07-01", "2022-01-01"), 
+    limits = as.Date(c("2018-07-01", "2022-01-01"))
+  ) +
+  ggplot2::coord_cartesian(clip = "off", ylim = c(0.5, 2)) +
+  ggplot2::annotate(
+    geom = "segment", 
+    x = as.Date("2018-10-01") + 5 * c(1, -1), 
+    xend = as.Date("2018-10-01") + 5 * c(1, -1), 
+    y = 0.42 - 0.1,
+    yend = 0.42 + 0.1 
+  ) +
+  ggplot2::geom_vline(
+    xintercept = as.Date(c("2018-07-01", "2021-04-19", "2022-01-01")),
+    linetype = "dashed"
+  ) +
+  ggplot2::geom_label(
+    mapping = ggplot2::aes(x = x, y = y, label = lab),
+    data = dplyr::tibble(
+      x = as.Date(c("2018-07-01", "2021-04-19", "2022-01-01")),
+      y = 1.25,
+      lab = c("Birth date", "18th birthday", "Extraction date")
+    ), 
+    inherit.aes = FALSE,
+    angle = 90
+  )
 ```
 
 In this vignette we will show examples on how to create those observation periods in Real World Synthetic Data.
