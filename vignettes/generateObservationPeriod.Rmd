@@ -18,10 +18,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, echo = FALSE}
-CDMConnector::requireEunomia()
-```
-
 # Introduction
 
 The [`observation_period`](https://ohdsi.github.io/CommonDataModel/cdm54.html#observation_period) table is a central component of the [OMOP CDM](https://ohdsi.github.io/CommonDataModel/).
