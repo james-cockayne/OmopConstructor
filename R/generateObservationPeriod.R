@@ -9,6 +9,9 @@
 #' @param censorDate Date to censor all followup for individuals.
 #' @param censorAge Age to censor individuals if they reach a certain age.
 #' @param recordsFrom Tables to retrieve observation records from.
+#' @param periodTypeConceptId Choose the observation_period_type_concept_id that
+#' best represents how the period was determined.
+#' [Accepted Concepts](https://athena.ohdsi.org/search-terms/terms?domain=Type+Concept&standardConcept=Standard&page=1&pageSize=15&query=).
 #'
 #' @return The `cdm_reference` object with a new `observation_period`.
 #' @export
@@ -23,7 +26,8 @@ generateObservationPeriod <- function(cdm,
                                         "procedure_occurrence",
                                         "visit_occurrence", "device_exposure",
                                         "measurement", "observation", "death"
-                                      )) {
+                                      ),
+                                      periodTypeConceptId = 32817L) {
   # initial checks
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
   omopgenerics::assertNumeric(collapseEra, length = 1)
@@ -31,6 +35,8 @@ generateObservationPeriod <- function(cdm,
   censorDate <- as.Date(censorDate)
   omopgenerics::assertDate(censorDate, length = 1)
   omopgenerics::assertNumeric(censorAge, length = 1)
+  omopgenerics::assertNumeric(periodTypeConceptId, integerish = TRUE, length = 1)
+  periodTypeConceptId <- as.integer(periodTypeConceptId)
   omopgenerics::assertChoice(recordsFrom, choices = c(
     "drug_exposure", "condition_occurrence", "procedure_occurrence",
     "visit_occurrence", "device_exposure", "measurement", "observation", "death"
@@ -108,7 +114,7 @@ generateObservationPeriod <- function(cdm,
     dplyr::filter(.data$start_date <= .data$end_date) |>
     dplyr::mutate(
       observation_period_id = as.integer(dplyr::row_number()),
-      period_type_concept_id = 0L
+      period_type_concept_id = .env$periodTypeConceptId
     ) |>
     dplyr::select(
       "observation_period_id", "person_id",

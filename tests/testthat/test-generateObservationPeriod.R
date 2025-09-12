@@ -62,7 +62,7 @@ test_that("test generateObservationPeriod", {
       person_id = 1:2L,
       observation_period_start_date = as.Date("2000-01-01") + c(0, 70L),
       observation_period_end_date = as.Date("2000-01-01") + c(45L, 89L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
   cdm <- generateObservationPeriod(
@@ -80,7 +80,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0, 50L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(45L, 50L, 90L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
   cdm <- generateObservationPeriod(
@@ -98,7 +98,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 1L, 2L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(50L, 1830L, 51L, 89L),
       observation_period_end_date = as.Date("2000-01-01") + c(50L, 1830L, 77L, 90L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
 
@@ -118,7 +118,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 50L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(45L, 50L, 90L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
   cdm <- generateObservationPeriod(
@@ -136,7 +136,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 50L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(45L, 50L, 90L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
   cdm <- generateObservationPeriod(
@@ -154,7 +154,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(50L, 90L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
 
@@ -174,7 +174,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 50L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(48L, 53L, 93L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
   cdm <- generateObservationPeriod(
@@ -192,7 +192,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(70L, 110L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
 
@@ -212,7 +212,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(1830L, 3000L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
   cdm <- generateObservationPeriod(
@@ -230,7 +230,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(980L, 1000L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
   cdm <- generateObservationPeriod(
@@ -248,7 +248,7 @@ test_that("test generateObservationPeriod", {
       person_id = 1L,
       observation_period_start_date = as.Date("2000-01-01") + c(0L),
       observation_period_end_date = as.Date("2000-01-01") + c(50L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
 
@@ -268,7 +268,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(1830L, 7304L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
 

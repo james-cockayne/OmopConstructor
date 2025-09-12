@@ -12,7 +12,8 @@ generateObservationPeriod(
   censorDate = Sys.time(),
   censorAge = 120L,
   recordsFrom = c("drug_exposure", "condition_occurrence", "procedure_occurrence",
-    "visit_occurrence", "device_exposure", "measurement", "observation", "death")
+    "visit_occurrence", "device_exposure", "measurement", "observation", "death"),
+  periodTypeConceptId = 32817L
 )
 }
 \arguments{
@@ -28,6 +29,10 @@ period as persistence window.}
 \item{censorAge}{Age to censor individuals if they reach a certain age.}
 
 \item{recordsFrom}{Tables to retrieve observation records from.}
+
+\item{periodTypeConceptId}{Choose the observation_period_type_concept_id that
+best represents how the period was determined.
+\href{https://athena.ohdsi.org/search-terms/terms?domain=Type+Concept&standardConcept=Standard&page=1&pageSize=15&query=}{Accepted Concepts}.}
 }
 \value{
 The \code{cdm_reference} object with a new \code{observation_period}.
