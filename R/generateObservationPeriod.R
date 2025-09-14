@@ -216,6 +216,8 @@ selectColumns <- function(cdm, table) {
       dplyr::mutate(!!!q)
   }
 
+  fdsaghjfkl
+
   return(x)
 }
 correctEndDate <- function(x) {
