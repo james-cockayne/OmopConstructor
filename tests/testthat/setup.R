@@ -12,7 +12,16 @@ copyCdm <- function(cdm) {
       writeSchema = c(schema = "main", prefix = prefix)
     ),
     "sql server CDMConnector" = NULL,
-    "redshift CDMConnector" = NULL,
+    "redshift CDMConnector" = CDMConnector::dbSource(
+      con = RPostgres::dbConnect(
+        RPostgres::Redshift(),
+        dbname = stringr::str_split_1(Sys.getenv("CDM5_REDSHIFT_SERVER"), "/")[2],
+        host = stringr::str_split_1(Sys.getenv("CDM5_REDSHIFT_SERVER"), "/")[1],
+        user = Sys.getenv("CDM5_REDSHIFT_USER"),
+        password = Sys.getenv("CDM5_REDSHIFT_PASSWORD")
+      ),
+      writeSchema = c(schema = "public", prefix = prefix)
+    ),
     "postgres CDMConnector" = CDMConnector::dbSource(
       con = RPostgres::dbConnect(
         RPostgres::Postgres(),
