@@ -2,6 +2,7 @@ test_that("test generateObservationPeriod", {
   collectOp <- function(x) {
     x |>
       dplyr::collect() |>
+      dplyr::as_tibble() |>
       dplyr::arrange(.data$person_id, .data$observation_period_start_date)
   }
 
