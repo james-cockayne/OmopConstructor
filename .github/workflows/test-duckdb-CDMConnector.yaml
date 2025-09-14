@@ -39,5 +39,5 @@ jobs:
           Sys.setenv("DB_TO_TEST" = "duckdb CDMConnector")
           x <- devtools::test()
           failed <- sum(dplyr::as_tibble(x)$failed)
-          if (failed > 0) cli::cli_abort(c(x = "{filed} tests failed!"))
+          if (failed > 0) cli::cli_abort(c(x = "{failed} tests failed!"))
         shell: Rscript {0}
