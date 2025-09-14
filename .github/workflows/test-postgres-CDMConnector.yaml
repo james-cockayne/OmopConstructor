@@ -12,6 +12,13 @@ jobs:
 
     name: test-postgres-CDMConnector
 
+    env:
+      CDM5_POSTGRESQL_DBNAME: ${{ secrets.CDM5_POSTGRESQL_DBNAME }}
+      CDM5_POSTGRESQL_HOST: ${{ secrets.CDM5_POSTGRESQL_HOST }}
+      CDM5_POSTGRESQL_USER: ${{ secrets.CDM5_POSTGRESQL_USER }}
+      CDM5_POSTGRESQL_PASSWORD: ${{ secrets.CDM5_POSTGRESQL_PASSWORD }}
+      CDM5_POSTGRESQL_SCRATCH_SCHEMA: ${{ secrets.CDM5_POSTGRESQL_SCRATCH_SCHEMA }}
+
     strategy:
       fail-fast: true
       matrix:
