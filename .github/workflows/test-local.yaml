@@ -38,6 +38,6 @@ jobs:
         run: |
           Sys.setenv("DB_TO_TEST" = "local")
           x <- devtools::test()
-          failed <- sum(dplyr::as_tibble(x)$failed)
-          if (failed > 0) cli::cli_abort(c(x = "{failed} tests failed!"))
+          error <- sum(as.numeric(dplyr::as_tibble(x)$error))
+          if (error > 0) cli::cli_abort(c(x = "Tests failed"))
         shell: Rscript {0}
