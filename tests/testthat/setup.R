@@ -11,7 +11,19 @@ copyCdm <- function(cdm) {
       con = duckdb::dbConnect(drv = duckdb::duckdb(dbdir = ":memory:")),
       writeSchema = c(schema = "main", prefix = prefix)
     ),
-    "sql server CDMConnector" = NULL,
+    "sqlserver CDMConnector" = CDMConnector::dbSource(
+      con = odbc::dbConnect(
+        odbc::odbc(),
+        Driver = "ODBC Driver 18 for SQL Server",
+        Server = Sys.getenv("CDM5_SQL_SERVER_SERVER"),
+        Database = "CDMV5",
+        UID = Sys.getenv("CDM5_SQL_SERVER_USER"),
+        PWD = Sys.getenv("CDM5_SQL_SERVER_PASSWORD"),
+        TrustServerCertificate="yes",
+        Port = 1433
+      ),
+      writeSchema = c(catalog = "ohdsi", schema = "dbo", prefix = prefix)
+    ),
     "redshift CDMConnector" = NULL,
     "postgres CDMConnector" = CDMConnector::dbSource(
       con = RPostgres::dbConnect(
