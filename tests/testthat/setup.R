@@ -2,7 +2,7 @@
 dbToTest <- Sys.getenv("DB_TO_TEST", "duckdb CDMConnector")
 copyCdm <- function(cdm) {
   # random prefix that starts with oc
-  prefix <- paste0("oc_", paste0(sample(letters, 3, T), collapse = TRUE), "_")
+  prefix <- paste0("oc_", sample(letters, 1), "_")
 
   # create the source to copy the cdm to
   to <- switch(
