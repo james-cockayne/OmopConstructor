@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 
 ## Tested sources
 
-[![](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-local-omopgenerics.yaml.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-local-omopgenerics.yaml)
+[![](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-local-omopgenerics.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-local-omopgenerics.yaml)
 [![](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-duckdb-CDMConnector.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-duckdb-CDMConnector.yaml)
 [![](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-postgres-CDMConnector.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-postgres-CDMConnector.yaml)
 
