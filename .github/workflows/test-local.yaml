@@ -4,13 +4,13 @@ on:
   pull_request:
     branches: [main]
 
-name: test-duckdb-CDMConnector
+name: test-local
 
 jobs:
-  test-duckdb-CDMConnector:
+  test-local:
     runs-on: ubuntu-latest
 
-    name: test-duckdb-CDMConnector
+    name: test-local
 
     strategy:
       fail-fast: true
@@ -36,7 +36,7 @@ jobs:
 
       - name: Run tests on duckdb
         run: |
-          Sys.setenv("DB_TO_TEST" = "duckdb CDMConnector")
+          Sys.setenv("DB_TO_TEST" = "local")
           x <- devtools::test()
           failed <- sum(dplyr::as_tibble(x)$failed)
           if (failed > 0) cli::cli_abort(c(x = "{failed} tests failed!"))
