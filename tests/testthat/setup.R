@@ -3,6 +3,7 @@ dbToTest <- Sys.getenv("DB_TO_TEST", "duckdb CDMConnector")
 copyCdm <- function(cdm) {
   # create the source to copy the cdm to
   prefix <- "oc_test_"
+
   to <- switch(
     dbToTest,
     "duckdb CDMConnector" = CDMConnector::dbSource(
@@ -11,7 +12,16 @@ copyCdm <- function(cdm) {
     ),
     "sql server CDMConnector" = NULL,
     "redshift CDMConnector" = NULL,
-    "postgres CDMConnector" = NULL,
+    "postgres CDMConnector" = CDMConnector::dbSource(
+      con = RPostgres::dbConnect(
+        RPostgres::Postgres(),
+        dbname = stringr::str_split_1(Sys.getenv("CDM5_POSTGRESQL_SERVER"), "/")[2],
+        host = stringr::str_split_1(Sys.getenv("CDM5_POSTGRESQL_SERVER"), "/")[1],
+        user = Sys.getenv("CDM5_POSTGRESQL_USER"),
+        password = Sys.getenv("CDM5_POSTGRESQL_PASSWORD")
+      ),
+      writeSchema = c(schema = "public", prefix = prefix)
+    ),
     "local" = omopgenerics::newLocalSource()
   )
 

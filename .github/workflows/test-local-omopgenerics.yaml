@@ -4,13 +4,11 @@ on:
   pull_request:
     branches: [main]
 
-name: test-local
+name: local-omopgenerics
 
 jobs:
-  test-local:
+  local-omopgenerics:
     runs-on: ubuntu-latest
-
-    name: test-local
 
     strategy:
       fail-fast: true
@@ -34,10 +32,11 @@ jobs:
           extra-packages: any::devtools
           needs: check
 
-      - name: Run tests on duckdb
+      - name: Run tests with local source
         run: |
           Sys.setenv("DB_TO_TEST" = "local")
           x <- devtools::test()
-          failed <- sum(dplyr::as_tibble(x)$failed)
-          if (failed > 0) cli::cli_abort(c(x = "{failed} tests failed!"))
+          error <- sum(as.numeric(dplyr::as_tibble(x)$error))
+          failed <- sum(as.numeric(dplyr::as_tibble(x)$failed))
+          if (error + failed > 0) cli::cli_abort(c(x = "Tests failed"))
         shell: Rscript {0}

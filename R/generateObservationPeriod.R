@@ -114,6 +114,7 @@ generateObservationPeriod <- function(cdm,
   # filter censor < start_date
   cdm$observation_period <- x |>
     dplyr::filter(.data$start_date <= .data$end_date) |>
+    dplyr::arrange(.data$person_id, .data$start_date) |>
     dplyr::mutate(
       observation_period_id = as.integer(dplyr::row_number()),
       period_type_concept_id = .env$periodTypeConceptId
