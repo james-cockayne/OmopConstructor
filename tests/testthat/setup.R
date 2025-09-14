@@ -21,7 +21,7 @@ copyCdm <- function(cdm) {
         TrustServerCertificate="yes",
         Port = 1433
       ),
-      writeSchema = c(catalog = "CDMV5", schema = "", prefix = prefix)
+      writeSchema = c(catalog = "ohdsi", schema = "dbo", prefix = prefix)
     ),
     "redshift CDMConnector" = NULL,
     "postgres CDMConnector" = CDMConnector::dbSource(
