@@ -27,6 +27,7 @@ knitr::opts_chunk$set(
 
 [![local datasets with omopgenerics](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-local.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-local.yaml)
 [![DuckDB with CDMConnector](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-duckdb-CDMConnector.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-duckdb-CDMConnector.yaml)
+[![Postgres with CDMConnector](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-postgres-CDMConnector.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-postgres-CDMConnector.yaml)
 
 ## Installation
 

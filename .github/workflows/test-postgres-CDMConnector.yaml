@@ -34,10 +34,11 @@ jobs:
           extra-packages: any::devtools
           needs: check
 
-      - name: Run tests on duckdb
+      - name: Run tests on postgres
         run: |
           Sys.setenv("DB_TO_TEST" = "postgres CDMConnector")
           x <- devtools::test()
+          print(x)
           failed <- sum(dplyr::as_tibble(x)$failed)
           if (failed > 0) cli::cli_abort(c(x = "{failed} tests failed!"))
         shell: Rscript {0}

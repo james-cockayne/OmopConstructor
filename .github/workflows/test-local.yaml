@@ -34,7 +34,7 @@ jobs:
           extra-packages: any::devtools
           needs: check
 
-      - name: Run tests on duckdb
+      - name: Run tests with local source
         run: |
           Sys.setenv("DB_TO_TEST" = "local")
           x <- devtools::test()
