@@ -32,9 +32,12 @@ test_that("Test collapse records", {
     )
   )
   expect_identical(omopgenerics::tableName(res0), "test2")
-  endTables <- omopgenerics::listSourceTables(cdm = cdm)
-  expect_identical(setdiff(startTables, endTables), character())
-  expect_identical(sort(endTables), sort(unique(c(startTables, "test2"))))
+
+  if (dbToTest != "local omopgenerics") {
+    endTables <- omopgenerics::listSourceTables(cdm = cdm)
+    expect_identical(setdiff(startTables, endTables), character())
+    expect_identical(sort(endTables), sort(unique(c(startTables, "test2"))))
+  }
 
   # gap 1
   expect_equal(

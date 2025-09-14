@@ -22,7 +22,7 @@ copyCdm <- function(cdm) {
       ),
       writeSchema = c(schema = "public", prefix = prefix)
     ),
-    "local" = omopgenerics::newLocalSource()
+    "local omopgenerics" = omopgenerics::newLocalSource()
   )
 
   # insert cdm to my source of interest
@@ -32,4 +32,5 @@ copyCdm <- function(cdm) {
 }
 dropCreatedTables <- function(cdm) {
   omopgenerics::dropSourceTable(cdm = cdm, name = dplyr::everything())
+  omopgenerics::cdmDisconnect(cdm = cdm)
 }
