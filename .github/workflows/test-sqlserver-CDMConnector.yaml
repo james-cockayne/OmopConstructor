@@ -47,17 +47,6 @@ jobs:
       - name: Run tests on sqlserver
         run: |
           Sys.setenv("DB_TO_TEST" = "sqlserver CDMConnector")
-          con <- DBI::dbConnect(
-            odbc::odbc(),
-            Driver = "ODBC Driver 18 for SQL Server",
-            Server = Sys.getenv("CDM5_SQL_SERVER_SERVER"),
-            Database = "CDMV5",
-            UID = Sys.getenv("CDM5_SQL_SERVER_USER"),
-            PWD = Sys.getenv("CDM5_SQL_SERVER_PASSWORD"),
-            TrustServerCertificate="yes",
-            Port = 1433
-          )
-          print(con)
           x <- devtools::test()
           error <- sum(as.numeric(dplyr::as_tibble(x)$error))
           failed <- sum(as.numeric(dplyr::as_tibble(x)$failed))
