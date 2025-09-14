@@ -13,11 +13,9 @@ jobs:
     name: test-postgres-CDMConnector
 
     env:
-      CDM5_POSTGRESQL_DBNAME: ${{ secrets.CDM5_POSTGRESQL_DBNAME }}
-      CDM5_POSTGRESQL_HOST: ${{ secrets.CDM5_POSTGRESQL_HOST }}
+      CDM5_POSTGRESQL_SERVER: ${{ secrets.CDM5_POSTGRESQL_SERVER }}
       CDM5_POSTGRESQL_USER: ${{ secrets.CDM5_POSTGRESQL_USER }}
       CDM5_POSTGRESQL_PASSWORD: ${{ secrets.CDM5_POSTGRESQL_PASSWORD }}
-      CDM5_POSTGRESQL_SCRATCH_SCHEMA: ${{ secrets.CDM5_POSTGRESQL_SCRATCH_SCHEMA }}
 
     strategy:
       fail-fast: true
@@ -44,14 +42,6 @@ jobs:
       - name: Run tests on postgres
         run: |
           Sys.setenv("DB_TO_TEST" = "postgres CDMConnector")
-          con <- RPostgres::dbConnect(
-            RPostgres::Postgres(),
-            dbname = Sys.getenv("CDM5_POSTGRESQL_DBNAME"),
-            host = Sys.getenv("CDM5_POSTGRESQL_HOST"),
-            user = Sys.getenv("CDM5_POSTGRESQL_USER"),
-            password = Sys.getenv("CDM5_POSTGRESQL_PASSWORD")
-          )
-          print(con)
           x <- devtools::test()
           error <- sum(as.numeric(dplyr::as_tibble(x)$error))
           failed <- sum(as.numeric(dplyr::as_tibble(x)$failed))
