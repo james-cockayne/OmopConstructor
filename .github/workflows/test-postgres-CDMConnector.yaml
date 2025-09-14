@@ -44,6 +44,14 @@ jobs:
       - name: Run tests on postgres
         run: |
           Sys.setenv("DB_TO_TEST" = "postgres CDMConnector")
+          con <- RPostgres::dbConnect(
+            RPostgres::Postgres(),
+            dbname = Sys.getenv("CDM5_POSTGRESQL_DBNAME"),
+            host = Sys.getenv("CDM5_POSTGRESQL_HOST"),
+            user = Sys.getenv("CDM5_POSTGRESQL_USER"),
+            password = Sys.getenv("CDM5_POSTGRESQL_PASSWORD")
+          )
+          print(con)
           x <- devtools::test()
           error <- sum(as.numeric(dplyr::as_tibble(x)$error))
           failed <- sum(as.numeric(dplyr::as_tibble(x)$failed))
