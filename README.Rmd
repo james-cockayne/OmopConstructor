@@ -29,6 +29,7 @@ knitr::opts_chunk$set(
 [![](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-duckdb-CDMConnector.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-duckdb-CDMConnector.yaml)
 [![](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-postgres-CDMConnector.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-postgres-CDMConnector.yaml)
 [![](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-redshift-CDMConnector.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-redshift-CDMConnector.yaml)
+[![](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-sqlserver-CDMConnector.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-sqlserver-CDMConnector.yaml)
 
 ## Installation
 
@@ -76,5 +77,5 @@ library(OmopSketch)
 
 result <- summariseObservationPeriod(observationPeriod = cdm$observation_period)
 
-tableObservationPeriod(result = result)
+tableObservationPeriod(result = result, type = "flextable")
 ```

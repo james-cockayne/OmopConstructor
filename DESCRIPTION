@@ -40,6 +40,7 @@ Suggests:
     ggplot2,
     gt,
     knitr,
+    odbc,
     omock,
     OmopSketch,
     rmarkdown,
