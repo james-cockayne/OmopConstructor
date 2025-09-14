@@ -43,6 +43,7 @@ Suggests:
     omock,
     OmopSketch,
     rmarkdown,
+    RPostgres,
     testthat (>= 3.0.0),
     visOmopResults
 Config/testthat/edition: 3

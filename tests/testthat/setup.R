@@ -11,7 +11,16 @@ copyCdm <- function(cdm) {
     ),
     "sql server CDMConnector" = NULL,
     "redshift CDMConnector" = NULL,
-    "postgres CDMConnector" = NULL,
+    "postgres CDMConnector" = CDMConnector::dbSource(
+      con = RPostgres::dbConnect(
+        RPostgres::Postgres(),
+        dbname = Sys.getenv("CDM5_POSTGRESQL_DBNAME"),
+        host = Sys.getenv("CDM5_POSTGRESQL_HOST"),
+        user = Sys.getenv("CDM5_POSTGRESQL_USER"),
+        password = Sys.getenv("CDM5_POSTGRESQL_PASSWORD")
+      ),
+      writeSchema = c(schema = Sys.getenv("CDM5_POSTGRESQL_SCRATCH_SCHEMA"), prefix = prefix)
+    ),
     "local" = omopgenerics::newLocalSource()
   )
 
