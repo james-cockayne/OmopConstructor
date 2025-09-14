@@ -17,7 +17,8 @@ copyCdm <- function(cdm) {
         dbname = stringr::str_split_1(Sys.getenv("CDM5_REDSHIFT_SERVER"), "/")[2],
         host = stringr::str_split_1(Sys.getenv("CDM5_REDSHIFT_SERVER"), "/")[1],
         user = Sys.getenv("CDM5_REDSHIFT_USER"),
-        password = Sys.getenv("CDM5_REDSHIFT_PASSWORD")
+        password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"),
+        port = 5439
       ),
       writeSchema = c(schema = "public", prefix = prefix)
     ),
