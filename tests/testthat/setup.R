@@ -10,7 +10,7 @@ copyCdm <- function(cdm) {
       con = duckdb::dbConnect(drv = duckdb::duckdb(dbdir = ":memory:")),
       writeSchema = c(schema = "main", prefix = prefix)
     ),
-    "sql server CDMConnector" = CDMConnector::dbSource(
+    "sqlserver CDMConnector" = CDMConnector::dbSource(
       con = DBI::dbConnect(
         odbc::odbc(),
         Driver = "ODBC Driver 18 for SQL Server",
