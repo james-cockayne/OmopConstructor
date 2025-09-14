@@ -45,6 +45,8 @@ generateObservationPeriod <- function(cdm,
   ))
   recordsFrom <- unique(recordsFrom)
   if (!is.infinite(censorAge)) censorAge <- as.integer(censorAge)
+  if (!is.infinite(collapseEra)) collapseEra <- as.integer(collapseEra)
+  if (!is.infinite(persistenceWindow)) persistenceWindow <- as.integer(persistenceWindow)
   if (persistenceWindow > collapseEra) {
     cli::cli_abort(c(
       x = "persistenceWindow ({persistenceWindow}) must be <= collapseEra ({collapseEra})"
@@ -53,9 +55,12 @@ generateObservationPeriod <- function(cdm,
 
   if (length(recordsFrom) == 0) {
     # return empty
+    pid <- cdm$person |>
+      utils::head(1) |>
+      dplyr::pull("person_id")
     op <- dplyr::tibble(
       observation_period_id = integer(),
-      person_id = integer(),
+      person_id = pid,
       observation_period_start_date = as.Date(character()),
       observation_period_end_date = as.Date(character()),
       period_type_concept_id = integer()

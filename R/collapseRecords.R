@@ -103,7 +103,7 @@ collapseRecords <- function(x,
     tidyr::pivot_wider(names_from = id[4], values_from = id[1]) |>
     dplyr::select(dplyr::all_of(c(by, startDate, endDate)))
 
-  if (gap > 0) {
+  if (gap > 0L) {
     x <- x |>
       dplyr::mutate(!!endDate := as.Date(clock::add_days(x = .data[[endDate]], n = -gap)))
   }

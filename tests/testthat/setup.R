@@ -11,6 +11,17 @@ copyCdm <- function(cdm) {
       con = duckdb::dbConnect(drv = duckdb::duckdb(dbdir = ":memory:")),
       writeSchema = c(schema = "main", prefix = prefix)
     ),
+    "redshift CDMConnector" = CDMConnector::dbSource(
+      con = RPostgres::dbConnect(
+        RPostgres::Redshift(),
+        dbname = stringr::str_split_1(Sys.getenv("CDM5_REDSHIFT_SERVER"), "/")[2],
+        host = stringr::str_split_1(Sys.getenv("CDM5_REDSHIFT_SERVER"), "/")[1],
+        user = Sys.getenv("CDM5_REDSHIFT_USER"),
+        password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"),
+        port = 5439
+      ),
+      writeSchema = c(schema = "public", prefix = prefix)
+    ),
     "sqlserver CDMConnector" = CDMConnector::dbSource(
       con = odbc::dbConnect(
         odbc::odbc(),
@@ -24,7 +35,6 @@ copyCdm <- function(cdm) {
       ),
       writeSchema = c(catalog = "ohdsi", schema = "dbo", prefix = prefix)
     ),
-    "redshift CDMConnector" = NULL,
     "postgres CDMConnector" = CDMConnector::dbSource(
       con = RPostgres::dbConnect(
         RPostgres::Postgres(),
