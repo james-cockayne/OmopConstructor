@@ -11,7 +11,7 @@ copyCdm <- function(cdm) {
       writeSchema = c(schema = "main", prefix = prefix)
     ),
     "sqlserver CDMConnector" = CDMConnector::dbSource(
-      con = DBI::dbConnect(
+      con = odbc::dbConnect(
         odbc::odbc(),
         Driver = "ODBC Driver 18 for SQL Server",
         Server = Sys.getenv("CDM5_SQL_SERVER_SERVER"),
