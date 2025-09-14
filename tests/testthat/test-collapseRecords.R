@@ -190,9 +190,5 @@ test_that("Test collapse records", {
     )
   )
 
-  if (dbToTest == "local") {
-    expect_true(FALSE)
-  }
-
   dropCreatedTables(cdm = cdm)
 })
