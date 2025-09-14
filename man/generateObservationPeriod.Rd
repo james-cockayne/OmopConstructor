@@ -26,7 +26,9 @@ period as persistence window.}
 
 \item{censorDate}{Date to censor all followup for individuals.}
 
-\item{censorAge}{Age to censor individuals if they reach a certain age.}
+\item{censorAge}{Age to censor individuals if they reach a certain age.
+The last day in observation of the individual will be the day prior to their
+birthday.}
 
 \item{recordsFrom}{Tables to retrieve observation records from.}
 

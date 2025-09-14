@@ -44,7 +44,7 @@ test_that("test generateObservationPeriod", {
     ),
     cdmName = "test"
   ) |>
-    omopgenerics::insertCdmTo(to = newSrc())
+    copyCdm()
 
   # different tables
   cdm <- generateObservationPeriod(
@@ -272,6 +272,5 @@ test_that("test generateObservationPeriod", {
     )
   )
 
-  omopgenerics::dropSourceTable(cdm = cdm, dplyr::everything())
-  omopgenerics::cdmDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })

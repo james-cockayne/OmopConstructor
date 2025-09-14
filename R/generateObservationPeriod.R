@@ -8,6 +8,8 @@
 #' period as persistence window.
 #' @param censorDate Date to censor all followup for individuals.
 #' @param censorAge Age to censor individuals if they reach a certain age.
+#' The last day in observation of the individual will be the day prior to their
+#' birthday.
 #' @param recordsFrom Tables to retrieve observation records from.
 #' @param periodTypeConceptId Choose the observation_period_type_concept_id that
 #' best represents how the period was determined.
@@ -132,55 +134,45 @@ getTemptativeDates <- function(cdm, tables, collapse, window, name) {
   if (is.infinite(collapse)) {
     end <- !is.infinite(window)
     q <- c(
-      "min(as.Date(.data[['{startDate}']]), na.rm = TRUE)",
-      "max(dplyr::coalesce(as.Date(.data[['{endDate}']]), as.Date(.data[['{startDate}']])), na.rm = TRUE)"
+      "min(.data$start_date, na.rm = TRUE)",
+      "max(dplyr::case_when(
+        is.na(.data$end_date) ~ .data$start_date,
+        .data$end_date < .data$start_date ~ .data$start_date,
+        .default = .data$end_date
+      ), na.rm = TRUE)"
     ) |>
+      rlang::parse_exprs() |>
       rlang::set_names(c("start_date", "end_date"))
     q <- q[c(TRUE, end)]
-    if (length(tables) == 1) {
-      nm <- name
-    } else {
-      nm <- omopgenerics::uniqueTableName()
-    }
+    nm <- omopgenerics::uniqueTableName()
     for (k in seq_along(tables)) {
-      table <- tables[k]
-      startDate <- omopgenerics::omopColumns(table = table, field = "start_date")
-      endDate <- omopgenerics::omopColumns(table = table, field = "end_date")
-      qs <- q |>
-        purrr::map_chr(\(x) {
-          glue::glue(x, startDate = startDate, endDate = endDate)
-        }) |>
-        rlang::parse_exprs()
-      xk <- cdm[[table]] |>
+      xk <- selectColumns(cdm, tables[k])
+      if (end) {
+        xk <- xk |>
+          correctEndDate()
+      }
+      xk <- xk |>
         dplyr::group_by(.data$person_id) |>
-        dplyr::summarise(!!!qs, .groups = "drop") |>
-        dplyr::compute(name = nm)
+        dplyr::summarise(!!!q, .groups = "drop")
       if (k == 1) {
         x <- xk |>
           dplyr::compute(name = name)
       } else {
-        qq <- q |>
-          purrr::map_chr(\(x) {
-            glue::glue(x, startDate = "start_date", endDate = "end_date")
-          }) |>
-          rlang::parse_exprs()
         x <- x |>
-          dplyr::union_all(xk) |>
+          dplyr::union_all(
+            xk |>
+              dplyr::compute(name = nm)
+          ) |>
           dplyr::group_by(.data$person_id) |>
-          dplyr::summarise(!!!qq, .groups = "drop") |>
+          dplyr::summarise(!!!q, .groups = "drop") |>
           dplyr::compute(name = name)
       }
     }
     omopgenerics::dropSourceTable(cdm = cdm, name = nm)
   } else {
     for (k in seq_along(tables)) {
-      table <- tables[k]
-      startDate <- omopgenerics::omopColumns(table = table, field = "start_date")
-      endDate <- omopgenerics::omopColumns(table = table, field = "end_date")
-      sel <- c("person_id", startDate, endDate) |>
-        rlang::set_names(c("person_id", "start_date", "end_date"))
-      xk <- cdm[[table]] |>
-        dplyr::select(dplyr::all_of(sel))
+      xk <- selectColumns(cdm, tables[k]) |>
+        correctEndDate()
       if (k == 1) {
         x <- xk
       } else {
@@ -189,9 +181,6 @@ getTemptativeDates <- function(cdm, tables, collapse, window, name) {
       }
     }
     x <- x |>
-      dplyr::mutate(
-        end_date = dplyr::coalesce(.data$end_date, .data$start_date)
-      ) |>
       collapseRecords(
         startDate = "start_date", endDate = "end_date", by = "person_id",
         gap = collapse, name = name
@@ -204,4 +193,43 @@ getTemptativeDates <- function(cdm, tables, collapse, window, name) {
       )))
   }
   x
+}
+selectColumns <- function(cdm, table) {
+  startDate <- omopgenerics::omopColumns(table = table, field = "start_date")
+  endDate <- omopgenerics::omopColumns(table = table, field = "end_date")
+  sel <- c("person_id", startDate, endDate) |>
+    rlang::set_names(c("person_id", "start_date", "end_date"))
+  x <- cdm[[table]] |>
+    dplyr::select(dplyr::all_of(sel))
+
+  # check if casting is needed
+  q <- c()
+  if (isColDate(x, "start_date")) {
+    q <- c(q, "start_date" = "as.Date(.data$start_date)")
+  }
+  if (isColDate(x, "end_date")) {
+    q <- c(q, "end_date" = "as.Date(.data$end_date)")
+  }
+  if (length(q) > 0) {
+    q <- rlang::parse_exprs(q)
+    x <- x |>
+      dplyr::mutate(!!!q)
+  }
+
+  return(x)
+}
+correctEndDate <- function(x) {
+  x |>
+    dplyr::mutate(end_date = dplyr::case_when(
+      is.na(.data$end_date) ~ .data$start_date,
+      .data$end_date < .data$start_date ~ .data$start_date,
+      .default = .data$end_date
+    ))
+}
+isColDate <- function(x, col) {
+  x |>
+    dplyr::select(dplyr::all_of(col)) |>
+    utils::head(1L) |>
+    dplyr::pull() |>
+    dplyr::type_sum() == "date"
 }

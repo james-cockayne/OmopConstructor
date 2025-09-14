@@ -1,6 +1,6 @@
 test_that("Test collapse records", {
   cdm <- omopgenerics::emptyCdmReference(cdmName = "test") |>
-    omopgenerics::insertCdmTo(to = newSrc())
+    copyCdm()
 
   # simple example
   x <- dplyr::tibble(
@@ -190,6 +190,9 @@ test_that("Test collapse records", {
     )
   )
 
-  omopgenerics::dropSourceTable(cdm = cdm, dplyr::everything())
-  omopgenerics::cdmDisconnect(cdm = cdm)
+  if (dbToTest == "local") {
+    expect_true(FALSE)
+  }
+
+  dropCreatedTables(cdm = cdm)
 })
