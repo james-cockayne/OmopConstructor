@@ -32,7 +32,6 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           needs: check
-        shell: Rscript {0}
 
       - name: Run tests on duckdb
         run: |
