@@ -1,5 +1,5 @@
 
-dbToTest <- Sys.getenv("DB_TO_TEST", "postgres CDMConnector")
+dbToTest <- Sys.getenv("DB_TO_TEST", "duckdb CDMConnector")
 copyCdm <- function(cdm) {
   # create the source to copy the cdm to
   prefix <- "oc_test_"

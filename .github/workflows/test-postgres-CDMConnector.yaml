@@ -4,13 +4,11 @@ on:
   pull_request:
     branches: [main]
 
-name: test-postgres-CDMConnector
+name: postgres-CDMConnector
 
 jobs:
-  test-postgres-CDMConnector:
+  postgres-CDMConnector:
     runs-on: ubuntu-latest
-
-    name: test-postgres-CDMConnector
 
     env:
       CDM5_POSTGRESQL_SERVER: ${{ secrets.CDM5_POSTGRESQL_SERVER }}
