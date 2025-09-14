@@ -1,0 +1,65 @@
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"
+
+name: sqlserver-CDMConnector
+
+jobs:
+  sqlserver-CDMConnector:
+    runs-on: ubuntu-latest
+
+    env:
+      CDM5_SQL_SERVER_SERVER: ${{ secrets.CDM5_SQL_SERVER_SERVER }}
+      CDM5_SQL_SERVER_USER: ${{ secrets.CDM5_SQL_SERVER_USER }}
+      CDM5_SQL_SERVER_PASSWORD: ${{ secrets.CDM5_SQL_SERVER_PASSWORD }}
+
+    strategy:
+      fail-fast: true
+      matrix:
+        config:
+          - {os: ubuntu-latest,   r: 'release'}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::devtools
+          needs: check
+
+      - uses: Yarden-zamir/install-mssql-odbc@main
+        with:
+          ODBC_VERSION: 18
+
+      - name: Run tests on sqlserver
+        run: |
+          Sys.setenv("DB_TO_TEST" = "sqlserver CDMConnector")
+          con <- DBI::dbConnect(
+            odbc::odbc(),
+            Driver = "ODBC Driver 18 for SQL Server",
+            Server = Sys.getenv("CDM5_SQL_SERVER_SERVER"),
+            Database = "CDMV5",
+            UID = Sys.getenv("CDM5_SQL_SERVER_USER"),
+            PWD = Sys.getenv("CDM5_SQL_SERVER_PASSWORD"),
+            TrustServerCertificate="yes",
+            Port = 1433
+          )
+          print(con)
+          x <- devtools::test()
+          error <- sum(as.numeric(dplyr::as_tibble(x)$error))
+          failed <- sum(as.numeric(dplyr::as_tibble(x)$failed))
+          if (error + failed > 0) cli::cli_abort(c(x = "Tests failed"))
+        shell: Rscript {0}
