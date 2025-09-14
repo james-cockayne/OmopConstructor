@@ -190,5 +190,7 @@ test_that("Test collapse records", {
     )
   )
 
+  expect_true(FALSE)
+
   dropCreatedTables(cdm = cdm)
 })

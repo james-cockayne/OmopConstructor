@@ -23,6 +23,10 @@ knitr::opts_chunk$set(
 
 **OmopConstructor** is a package that contains functionality to construct standardised tables from health care data formatted according to the Observational Medical Outcomes Partnership Common Data Model ([OMOP CDM](https://ohdsi.github.io/CommonDataModel/)). The package includes tools to build key tables such as observation period and drug era, among others.
 
+## Tested sources
+
+[![DuckDB with CDMConnector](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-duckdb-CDMConnector.yml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-duckdb-CDMConnector.yml)
+
 ## Installation
 
 You can install OmopConstructor from cran using:
