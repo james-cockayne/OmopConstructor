@@ -43,7 +43,8 @@ jobs:
       - name: Install unixODBC and Snowflake ODBC
         run: |
           sudo apt-get update
-          sudo apt-get install -y unixodbc unixodbc-dev ca-certificates
+          sudo apt-get install -y unixodbc unixodbc-dev ca-certificates wget
+          wget https://sfc-repo.snowflakecomputing.com/odbc/linux/ubuntu20/snowflake-odbc_2.25.6_amd64.deb -O snowflake-odbc.deb
           sudo dpkg -i snowflake-odbc.deb
           odbcinst -q -d
 
