@@ -33,6 +33,33 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
+      - name: Install Snowflake ODBC (Ubuntu)
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y unixodbc unixodbc-dev ca-certificates curl
+
+          # Pin a specific driver version to avoid "latest" 404s
+          VER=3.11.0
+          curl -fSLo snowflake-odbc.deb \
+            "https://sfc-repo.snowflakecomputing.com/odbc/linux/${VER}/snowflake-odbc-${VER}.x86_64.deb" \
+          && sudo dpkg -i snowflake-odbc.deb || sudo apt-get -f install -y
+
+          # If the .deb path ever breaks, fall back to TGZ + setup script
+          if ! odbcinst -q -d | grep -qi 'Snowflake'; then
+            curl -fSLo snowflake-odbc.tgz \
+              "https://sfc-repo.snowflakecomputing.com/odbc/linux/latest/snowflake_linux_x8664_odbc-${VER}.tgz"
+            tar xzf snowflake-odbc.tgz
+            sudo ./snowflake_odbc/unixodbc_setup.sh   # registers driver with unixODBC
+          fi
+
+          echo "::group::Drivers"
+          odbcinst -q -d || true
+          echo "::endgroup::"
+
+          # Show where the library lives (usually this path after .deb install)
+          find /usr/lib -name 'libSnowflake.so' -print || true
+
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
@@ -43,32 +70,6 @@ jobs:
         with:
           extra-packages: any::devtools
           needs: check
-
-      - name: Install Snowflake ODBC (Linux)
-        run: |
-          set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install -y unixodbc unixodbc-dev ca-certificates curl
-
-          # Download latest Snowflake ODBC .deb and install it
-          BASE=https://sfc-repo.snowflakecomputing.com/odbc/linux/latest
-          DEB=$(curl -fsSL "$BASE/" | grep -oE 'snowflake-odbc-[0-9.]+\.x86_64\.deb' | head -n1)
-          curl -fsSL -o snowflake-odbc.deb "$BASE/$DEB"
-          sudo dpkg -i snowflake-odbc.deb || sudo apt-get -f install -y
-
-          # Sanity checks — see driver names and where unixODBC looks
-          odbcinst -j
-          echo "::group::Registered ODBC drivers"
-          odbcinst -q -d || true
-          echo "::endgroup::"
-
-          # Show the Snowflake driver entry (should mention libSnowflake.so)
-          echo "::group::/etc/odbcinst.ini"
-          cat /etc/odbcinst.ini || true
-          echo "::endgroup::"
-
-          # Where the library actually is (typically /usr/lib/snowflake/odbc/lib/libSnowflake.so)
-          find /usr/lib -name 'libSnowflake.so' -print || true
 
       - name: Run tests on snowflake
         run: |
