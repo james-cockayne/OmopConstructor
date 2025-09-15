@@ -2,6 +2,7 @@ test_that("test generateObservationPeriod", {
   collectOp <- function(x) {
     x |>
       dplyr::collect() |>
+      dplyr::as_tibble() |>
       dplyr::arrange(.data$person_id, .data$observation_period_start_date)
   }
 
@@ -44,7 +45,7 @@ test_that("test generateObservationPeriod", {
     ),
     cdmName = "test"
   ) |>
-    omopgenerics::insertCdmTo(to = newSrc())
+    copyCdm()
 
   # different tables
   cdm <- generateObservationPeriod(
@@ -52,7 +53,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = 0L,
     persistenceWindow = 0L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = "visit_occurrence"
   )
   expect_equal(
@@ -62,7 +63,7 @@ test_that("test generateObservationPeriod", {
       person_id = 1:2L,
       observation_period_start_date = as.Date("2000-01-01") + c(0, 70L),
       observation_period_end_date = as.Date("2000-01-01") + c(45L, 89L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
   cdm <- generateObservationPeriod(
@@ -70,7 +71,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = 0L,
     persistenceWindow = 0L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -80,7 +81,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0, 50L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(45L, 50L, 90L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
   cdm <- generateObservationPeriod(
@@ -88,7 +89,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = 0L,
     persistenceWindow = 0L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("condition_occurrence", "death")
   )
   expect_equal(
@@ -98,7 +99,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 1L, 2L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(50L, 1830L, 51L, 89L),
       observation_period_end_date = as.Date("2000-01-01") + c(50L, 1830L, 77L, 90L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
 
@@ -108,7 +109,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = 0L,
     persistenceWindow = 0L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -118,7 +119,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 50L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(45L, 50L, 90L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
   cdm <- generateObservationPeriod(
@@ -126,7 +127,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = 4L,
     persistenceWindow = 0L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -136,7 +137,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 50L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(45L, 50L, 90L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
   cdm <- generateObservationPeriod(
@@ -144,7 +145,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = 5L,
     persistenceWindow = 0L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -154,7 +155,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(50L, 90L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
 
@@ -164,7 +165,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = 4L,
     persistenceWindow = 3L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -174,7 +175,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 50L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(48L, 53L, 93L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
   cdm <- generateObservationPeriod(
@@ -182,7 +183,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = Inf,
     persistenceWindow = 20L,
     censorDate = as.Date("2010-01-01"),
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -192,7 +193,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(70L, 110L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
 
@@ -202,7 +203,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = Inf,
     persistenceWindow = Inf,
     censorDate = as.Date("2000-01-01") + 3000L,
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -212,7 +213,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(1830L, 3000L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
   cdm <- generateObservationPeriod(
@@ -220,7 +221,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = Inf,
     persistenceWindow = 930,
     censorDate = as.Date("2000-01-01") + 1000L,
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -230,7 +231,7 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(980L, 1000L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
   cdm <- generateObservationPeriod(
@@ -238,7 +239,7 @@ test_that("test generateObservationPeriod", {
     collapseEra = Inf,
     persistenceWindow = Inf,
     censorDate = as.Date("2000-01-01") + 50L,
-    censorAge = 150L,
+    censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
   expect_equal(
@@ -248,7 +249,7 @@ test_that("test generateObservationPeriod", {
       person_id = 1L,
       observation_period_start_date = as.Date("2000-01-01") + c(0L),
       observation_period_end_date = as.Date("2000-01-01") + c(50L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
 
@@ -268,10 +269,9 @@ test_that("test generateObservationPeriod", {
       person_id = c(1L, 2L),
       observation_period_start_date = as.Date("2000-01-01") + c(0L, 51L),
       observation_period_end_date = as.Date("2000-01-01") + c(1830L, 7304L),
-      period_type_concept_id = 0L
+      period_type_concept_id = 32817L
     )
   )
 
-  omopgenerics::dropSourceTable(cdm = cdm, dplyr::everything())
-  omopgenerics::cdmDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })

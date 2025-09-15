@@ -1,12 +1,23 @@
 Package: OmopConstructor
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Build Tables in the OMOP Common Data Model
+Version: 0.1.0
 Authors@R: c(
     person(
         "Martí", "Català", email = "marti.catalasabate@ndorms.ox.ac.uk", 
         role = c("aut", "cre"), comment = c(ORCID = "0000-0003-3308-9905")
+    ),
+     person(
+        "Elin", "Rowlands", email = "elin.rowlands@ndorms.ox.ac.uk", 
+        role = c("ctb"), comment = c(ORCID = "0009-0005-5166-0417")
+    ),
+    person(
+        "Cecilia", "Campanile", email = "cecilia.campanile@ndorms.ox.ac.uk", 
+        role = c("ctb"), comment = c(ORCID = "0009-0007-6629-4661")
     ))
-Description: What the package does (one paragraph).
+Description: Provides functionality to construct standardised tables from health
+    care data formatted according to the Observational Medical Outcomes 
+    Partnership (OMOP) Common Data Model. The package includes tools to build 
+    key tables such as observation period and drug era, among others.
 License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -15,7 +26,6 @@ Imports:
     cli,
     clock,
     dplyr,
-    glue,
     omopgenerics,
     PatientProfiles,
     purrr,
@@ -24,9 +34,21 @@ Imports:
 Depends: 
     R (>= 4.1)
 Suggests: 
+    bookdown,
     CDMConnector,
     duckdb,
-    testthat (>= 3.0.0)
+    ggplot2,
+    gt,
+    knitr,
+    odbc,
+    omock,
+    OmopSketch,
+    rmarkdown,
+    RPostgres,
+    stringr,
+    testthat (>= 3.0.0),
+    visOmopResults
 Config/testthat/edition: 3
-URL: https://OHDSI.io/OmopConstructor/
-BugReports: https://github.com/OHDSI/OmopConstructor/issues
+URL: https://ohdsi.io/OmopConstructor/
+BugReports: https://github.com/ohdsi/OmopConstructor/issues
+VignetteBuilder: knitr

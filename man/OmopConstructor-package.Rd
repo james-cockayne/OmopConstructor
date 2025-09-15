@@ -4,20 +4,26 @@
 \name{OmopConstructor-package}
 \alias{OmopConstructor}
 \alias{OmopConstructor-package}
-\title{OmopConstructor: What the Package Does (One Line, Title Case)}
+\title{OmopConstructor: Build Tables in the OMOP Common Data Model}
 \description{
-What the package does (one paragraph).
+Provides functionality to construct standardised tables from health care data formatted according to the Observational Medical Outcomes Partnership (OMOP) Common Data Model. The package includes tools to build key tables such as observation period and drug era, among others.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://OHDSI.io/OmopConstructor/}
-  \item Report bugs at \url{https://github.com/OHDSI/OmopConstructor/issues}
+  \item \url{https://ohdsi.io/OmopConstructor/}
+  \item Report bugs at \url{https://github.com/ohdsi/OmopConstructor/issues}
 }
 
 }
 \author{
 \strong{Maintainer}: Martí Català \email{marti.catalasabate@ndorms.ox.ac.uk} (\href{https://orcid.org/0000-0003-3308-9905}{ORCID})
+
+Other contributors:
+\itemize{
+  \item Elin Rowlands \email{elin.rowlands@ndorms.ox.ac.uk} (\href{https://orcid.org/0009-0005-5166-0417}{ORCID}) [contributor]
+  \item Cecilia Campanile \email{cecilia.campanile@ndorms.ox.ac.uk} (\href{https://orcid.org/0009-0007-6629-4661}{ORCID}) [contributor]
+}
 
 }
 \keyword{internal}
