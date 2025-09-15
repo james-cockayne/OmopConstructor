@@ -42,9 +42,6 @@ jobs:
 
       - name: Setup Snowflake cli
         uses: snowflakedb/snowflake-cli-action@v2.0
-        with:
-          use-oidc: true
-          cli-version: "3.11"
 
       - name: Run tests on snowflake
         run: |
