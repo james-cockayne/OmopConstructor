@@ -40,13 +40,11 @@ jobs:
           extra-packages: any::devtools
           needs: check
 
-      - name: Install unixODBC and Snowflake ODBC
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y unixodbc unixodbc-dev ca-certificates wget
-          wget https://sfc-repo.snowflakecomputing.com/odbc/linux/ubuntu20/snowflake-odbc_2.25.6_amd64.deb -O snowflake-odbc.deb
-          sudo dpkg -i snowflake-odbc.deb
-          odbcinst -q -d
+      - name: Setup Snowflake cli
+        uses: snowflakedb/snowflake-cli-action@v2.0
+        with:
+          use-oidc: true
+          cli-version: "3.11"
 
       - name: Run tests on snowflake
         run: |
