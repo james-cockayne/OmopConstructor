@@ -9,6 +9,10 @@ on:
 
 name: snowflake-CDMConnector
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   snowflake-CDMConnector:
     runs-on: ubuntu-latest
@@ -42,10 +46,14 @@ jobs:
 
       - name: Setup Snowflake cli
         uses: snowflakedb/snowflake-cli-action@v2.0
+        with:
+          use-oidc: true
+          cli-version: "3.11"
 
       - name: Run tests on snowflake
         run: |
           Sys.setenv("DB_TO_TEST" = "snowflake CDMConnector")
+          print(odbc::odbcListDrivers())
           x <- devtools::test()
           error <- sum(as.numeric(dplyr::as_tibble(x)$error))
           failed <- sum(as.numeric(dplyr::as_tibble(x)$failed))
