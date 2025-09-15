@@ -26,6 +26,7 @@ era, among others.
 [![](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-postgres-CDMConnector.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-postgres-CDMConnector.yaml)
 [![](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-redshift-CDMConnector.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-redshift-CDMConnector.yaml)
 [![](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-sqlserver-CDMConnector.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-sqlserver-CDMConnector.yaml)
+[![](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-snowflake-CDMConnector.yaml/badge.svg?branch=main)](https://github.com/OHDSI/OmopConstructor/actions/workflows/test-snowflake-CDMConnector.yaml)
 
 ## Installation
 

@@ -45,6 +45,18 @@ copyCdm <- function(cdm) {
       ),
       writeSchema = c(schema = "public", prefix = prefix)
     ),
+    "snowflake CDMConnector" = CDMConnector::dbSource(
+      con = odbc::dbConnect(
+        odbc::odbc(),
+        SERVER = stringr::str_extract(Sys.getenv("CDM_SNOWFLAKE_CONNECTION_STRING"), "(?<=//)[^?]+(?=\\?)"),
+        UID = Sys.getenv("CDM_SNOWFLAKE_USER"),
+        PWD = Sys.getenv("CDM_SNOWFLAKE_PASSWORD"),
+        DATABASE = "ATLAS",
+        WAREHOUSE = stringr::str_extract(Sys.getenv("CDM_SNOWFLAKE_CONNECTION_STRING"), "(?i)(?<=\\bwarehouse=)[^&?#]+"),
+        Driver = "SnowflakeDSIIDriver"
+      ),
+      writeSchema = c(catalog = "ATLAS", schema = "RESULTS", prefix = prefix)
+    ),
     "local omopgenerics" = omopgenerics::newLocalSource()
   )
 

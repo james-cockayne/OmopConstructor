@@ -1,0 +1,82 @@
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"
+
+name: snowflake-CDMConnector
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  snowflake-CDMConnector:
+    runs-on: ubuntu-latest
+
+    env:
+      CDM_SNOWFLAKE_USER: ${{ secrets.CDM_SNOWFLAKE_USER }}
+      CDM_SNOWFLAKE_PASSWORD: ${{ secrets.CDM_SNOWFLAKE_PASSWORD }}
+      CDM_SNOWFLAKE_CONNECTION_STRING: ${{ secrets.CDM_SNOWFLAKE_CONNECTION_STRING }}
+
+    strategy:
+      fail-fast: true
+      matrix:
+        config:
+          - {os: ubuntu-latest,   r: 'release'}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Install Snowflake ODBC (Ubuntu)
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y unixodbc unixodbc-dev ca-certificates curl
+
+          # Pin a specific driver version to avoid "latest" 404s
+          VER=3.11.0
+          curl -fSLo snowflake-odbc.deb \
+            "https://sfc-repo.snowflakecomputing.com/odbc/linux/${VER}/snowflake-odbc-${VER}.x86_64.deb" \
+          && sudo dpkg -i snowflake-odbc.deb || sudo apt-get -f install -y
+
+          # If the .deb path ever breaks, fall back to TGZ + setup script
+          if ! odbcinst -q -d | grep -qi 'Snowflake'; then
+            curl -fSLo snowflake-odbc.tgz \
+              "https://sfc-repo.snowflakecomputing.com/odbc/linux/latest/snowflake_linux_x8664_odbc-${VER}.tgz"
+            tar xzf snowflake-odbc.tgz
+            sudo ./snowflake_odbc/unixodbc_setup.sh   # registers driver with unixODBC
+          fi
+
+          echo "::group::Drivers"
+          odbcinst -q -d || true
+          echo "::endgroup::"
+
+          # Show where the library lives (usually this path after .deb install)
+          find /usr/lib -name 'libSnowflake.so' -print || true
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::devtools
+          needs: check
+
+      - name: Run tests on snowflake
+        run: |
+          Sys.setenv("DB_TO_TEST" = "snowflake CDMConnector")
+          print(odbc::odbcListDrivers())
+          x <- devtools::test()
+          error <- sum(as.numeric(dplyr::as_tibble(x)$error))
+          failed <- sum(as.numeric(dplyr::as_tibble(x)$failed))
+          if (error + failed > 0) cli::cli_abort(c(x = "Tests failed"))
+        shell: Rscript {0}
