@@ -44,11 +44,31 @@ jobs:
           extra-packages: any::devtools
           needs: check
 
-      - name: Setup Snowflake cli
-        uses: snowflakedb/snowflake-cli-action@v2.0
-        with:
-          use-oidc: true
-          cli-version: "3.11"
+      - name: Install Snowflake ODBC (Linux)
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y unixodbc unixodbc-dev ca-certificates curl
+
+          # Download latest Snowflake ODBC .deb and install it
+          BASE=https://sfc-repo.snowflakecomputing.com/odbc/linux/latest
+          DEB=$(curl -fsSL "$BASE/" | grep -oE 'snowflake-odbc-[0-9.]+\.x86_64\.deb' | head -n1)
+          curl -fsSL -o snowflake-odbc.deb "$BASE/$DEB"
+          sudo dpkg -i snowflake-odbc.deb || sudo apt-get -f install -y
+
+          # Sanity checks — see driver names and where unixODBC looks
+          odbcinst -j
+          echo "::group::Registered ODBC drivers"
+          odbcinst -q -d || true
+          echo "::endgroup::"
+
+          # Show the Snowflake driver entry (should mention libSnowflake.so)
+          echo "::group::/etc/odbcinst.ini"
+          cat /etc/odbcinst.ini || true
+          echo "::endgroup::"
+
+          # Where the library actually is (typically /usr/lib/snowflake/odbc/lib/libSnowflake.so)
+          find /usr/lib -name 'libSnowflake.so' -print || true
 
       - name: Run tests on snowflake
         run: |
