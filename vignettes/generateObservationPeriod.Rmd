@@ -38,8 +38,8 @@ In this vignette, we will illustrate several approaches to defining the observat
 2.  *First to last*: one observation period per person from first record to last record in the database.
 3.  *Inpatient*: individuals are in observation while they have an ongoing visit.
 4.  *Collapse 180*: individuals are in observation while they have an ongoing record, different records are collapsed using a window of 180 days.
-5.  *Collapse+Persistence 180*: individuals are in observation while they have an ongoing record, different records are collapsed using a window of 180 days, a persistence window of 180 days is added at the end of each observation period.
-6.  *Collapse+Persistence 365*: individuals are in observation while they have an ongoing record, different records are collapsed using a window of 365 days, a persistence window of 365 days is added at the end of each observation period.
+5.  *Collapse+Persistence 180*: individuals are in observation while they have an ongoing record, different records are collapsed using a window of 180 days, a persistence window of 179 days is added at the end of each observation period.
+6.  *Collapse+Persistence 365*: individuals are in observation while they have an ongoing record, different records are collapsed using a window of 365 days, a persistence window of 364 days is added at the end of each observation period.
 7.  *Pediatric*: one observation period per person from first record to extraction date or 18th birthday of the individual.
 
 To demonstrate these definitions, we will use a toy example containing 3 visit records (`visit_occurrence`) and 5 drug records (`drug_exposure`). These are shown in Figure @ref(fig:fig-toy), where visits are shown in blue and drug exposures in green.
@@ -279,13 +279,13 @@ result4 <- bind(result4a, result4b) |>
 
 ## Collapse+Persistence 180
 
-To collapse records separated by 180 days we will use the `collapseEra` argument (`collapseEra = 180`), this time we will set `persistenceWindow` to `180` as well as we want to add 180 days after any record.
+To collapse records separated by 180 days we will use the `collapseEra` argument (`collapseEra = 180`), this time we will set `persistenceWindow` to `179` as we want to add 179 days after any record. Note `persistenceWindow` and `collapseEra` can not be the same because *back to back* observation periods are not allowed.
 
 ```{r}
 cdm <- generateObservationPeriod(
   cdm = cdm,
   collapseEra = 180,
-  persistenceWindow = 180,
+  persistenceWindow = 179,
   censorAge = 120,
   censorDate = as.Date("2020-01-01")
 )
@@ -304,13 +304,13 @@ result5 <- bind(result5a, result5b) |>
 
 ## Collapse+Persistence 365
 
-In this case we will set both arguments to `365` analogously to the previous definition.
+In this case we will set arguments to `365` and `364` analogously to the previous definition.
 
 ```{r}
 cdm <- generateObservationPeriod(
   cdm = cdm,
   collapseEra = 365,
-  persistenceWindow = 365,
+  persistenceWindow = 364,
   censorAge = 120,
   censorDate = as.Date("2020-01-01")
 )
