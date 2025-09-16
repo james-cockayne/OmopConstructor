@@ -49,8 +49,12 @@ generateObservationPeriod <- function(cdm,
   if (!is.infinite(persistenceWindow)) persistenceWindow <- as.integer(persistenceWindow)
   if (persistenceWindow > collapseEra) {
     cli::cli_abort(c(
-      x = "persistenceWindow ({persistenceWindow}) must be <= collapseEra ({collapseEra})"
+      x = "persistenceWindow ({persistenceWindow}) must be < collapseEra ({collapseEra})"
     ))
+  }
+  if (persistenceWindow == collapseEra & !is.infinite(collapseEra)) {
+    cli::cli_inform(c(i = "`persistenceWindow` ({.pkg {persistenceWindow}}) can not be equal to `collapseEra` ({.pkg {collapseEra}}) as back to back observation periods are not allowed, setting `collapseEra = {.pkg {collapseEra+1}}`."))
+    collapseEra <- collapseEra + 1
   }
 
   if (length(recordsFrom) == 0) {
@@ -177,8 +181,7 @@ getTemptativeDates <- function(cdm, tables, collapse, window, name) {
     omopgenerics::dropSourceTable(cdm = cdm, name = nm)
   } else {
     for (k in seq_along(tables)) {
-      xk <- selectColumns(cdm, tables[k]) |>
-        correctEndDate()
+      xk <- selectColumns(cdm, tables[k])
       if (k == 1) {
         x <- xk
       } else {
@@ -210,10 +213,10 @@ selectColumns <- function(cdm, table) {
 
   # check if casting is needed
   q <- c()
-  if (isColDate(x, "start_date")) {
+  if (!isColDate(x, "start_date")) {
     q <- c(q, "start_date" = "as.Date(.data$start_date)")
   }
-  if (isColDate(x, "end_date")) {
+  if (!isColDate(x, "end_date")) {
     q <- c(q, "end_date" = "as.Date(.data$end_date)")
   }
   if (length(q) > 0) {

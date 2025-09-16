@@ -36,6 +36,19 @@ collapseRecords <- function(x,
     cli::cli_inform(c("!" = "Columns {.var {extraColumns}} will be dropped from the cdm_table."))
   }
 
+  # eliminate missing start dates and correct end date
+  q <- "dplyr::case_when(
+    is.na(.data[['{endDate}']]) ~ .data[['{startDate}']],
+    .data[['{endDate}']] < .data[['{startDate}']] ~ .data[['{startDate}']],
+    .default = .data[['{endDate}']]
+  )" |>
+    glue::glue() |>
+    rlang::set_names(endDate) |>
+    rlang::parse_exprs()
+  x <- x |>
+    dplyr::filter(!is.na(.data[[startDate]])) |>
+    dplyr::mutate(!!!q)
+
   if (omopgenerics::isTableEmpty(x)) {
     x <- x |>
       dplyr::select(dplyr::all_of(c(by, startDate, endDate))) |>
