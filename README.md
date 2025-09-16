@@ -102,3 +102,15 @@ tableObservationPeriod(result = result, type = "flextable")
 ```
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+
+## Running
+
+Configure a `.env` configuration file using the `example.env` example settings file. Supply your JDBC driver and place it in the `drivers` directory.
+
+```
+docker build . -t omop-constructor
+
+docker run --rm --env-file=".env" --network="host" omop-constructor
+```
+
+After successful execution the `observation_period` will have been truncated and recalculated.
