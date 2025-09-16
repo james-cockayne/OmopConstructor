@@ -275,3 +275,48 @@ test_that("test generateObservationPeriod", {
 
   dropCreatedTables(cdm = cdm)
 })
+
+test_that("back to back observation periods", {
+  cdm <- omock::mockCdmFromTables(
+    tables = list(
+      visit_occurrence = dplyr::tibble(
+        visit_occurrence_id = 1:3L,
+        person_id = 1L,
+        visit_start_date = as.Date("2000-01-01") + c(0L, 31L, 70L),
+        visit_end_date = as.Date("2000-01-01") + c(30L, 45L, 89L),
+        visit_concept_id = 0L,
+        visit_type_concept_id = 0L
+      )
+    )
+  ) |>
+    copyCdm()
+
+  # expect two observation periods by default as visits are back to back
+  expect_no_error(
+    cdm <- generateObservationPeriod(
+      cdm = cdm, collapseEra = 0L, persistenceWindow = 0L, censorAge = Inf,
+      recordsFrom = "visit_occurrence"
+    )
+  )
+  expect_identical(omopgenerics::numberRecords(cdm$observation_period), 2L)
+
+  # check with persistence 23 it is not collapsed
+  expect_no_error(
+    cdm <- generateObservationPeriod(
+      cdm = cdm, collapseEra = 24L, persistenceWindow = 23L, censorAge = Inf,
+      recordsFrom = "visit_occurrence"
+    )
+  )
+  expect_identical(omopgenerics::numberRecords(cdm$observation_period), 2L)
+
+  # check with persistence 24 it is collapsed
+  expect_no_error(
+    cdm <- generateObservationPeriod(
+      cdm = cdm, collapseEra = 24L, persistenceWindow = 24L, censorAge = Inf,
+      recordsFrom = "visit_occurrence"
+    )
+  )
+  expect_identical(omopgenerics::numberRecords(cdm$observation_period), 1L)
+
+  dropCreatedTables(cdm = cdm)
+})

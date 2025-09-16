@@ -109,16 +109,18 @@ generateObservationPeriod <- function(cdm,
   }
 
   # censor at censorAge
-  x <- x |>
-    PatientProfiles::addDateOfBirthQuery(dateOfBirthName = "date_of_birth") |>
-    dplyr::mutate(
-      age_date = as.Date(clock::add_days(
-        clock::add_years(.data$date_of_birth, .env$censorAge), -1L
-      )),
-      end_date = dplyr::if_else(
-        .data$age_date <= .data$end_date, .data$age_date, .data$end_date
+  if (!is.infinite(censorAge)) {
+    x <- x |>
+      PatientProfiles::addDateOfBirthQuery(dateOfBirthName = "date_of_birth") |>
+      dplyr::mutate(
+        age_date = as.Date(clock::add_days(
+          clock::add_years(.data$date_of_birth, .env$censorAge), -1L
+        )),
+        end_date = dplyr::if_else(
+          .data$age_date <= .data$end_date, .data$age_date, .data$end_date
+        )
       )
-    )
+  }
 
   # filter censor < start_date
   cdm$observation_period <- x |>
