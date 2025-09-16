@@ -50,8 +50,8 @@ test_that("test generateObservationPeriod", {
   # different tables
   cdm <- generateObservationPeriod(
     cdm = cdm,
-    collapseEra = 0L,
-    persistenceWindow = 0L,
+    collapseDays = 0L,
+    persistenceDays = 0L,
     censorDate = as.Date("2010-01-01"),
     censorAge = 120L,
     recordsFrom = "visit_occurrence"
@@ -68,8 +68,8 @@ test_that("test generateObservationPeriod", {
   )
   cdm <- generateObservationPeriod(
     cdm = cdm,
-    collapseEra = 0L,
-    persistenceWindow = 0L,
+    collapseDays = 0L,
+    persistenceDays = 0L,
     censorDate = as.Date("2010-01-01"),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
@@ -86,8 +86,8 @@ test_that("test generateObservationPeriod", {
   )
   cdm <- generateObservationPeriod(
     cdm = cdm,
-    collapseEra = 0L,
-    persistenceWindow = 0L,
+    collapseDays = 0L,
+    persistenceDays = 0L,
     censorDate = as.Date("2010-01-01"),
     censorAge = 120L,
     recordsFrom = c("condition_occurrence", "death")
@@ -106,8 +106,8 @@ test_that("test generateObservationPeriod", {
   # collapse era
   cdm <- generateObservationPeriod(
     cdm = cdm,
-    collapseEra = 0L,
-    persistenceWindow = 0L,
+    collapseDays = 0L,
+    persistenceDays = 0L,
     censorDate = as.Date("2010-01-01"),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
@@ -124,8 +124,8 @@ test_that("test generateObservationPeriod", {
   )
   cdm <- generateObservationPeriod(
     cdm = cdm,
-    collapseEra = 4L,
-    persistenceWindow = 0L,
+    collapseDays = 4L,
+    persistenceDays = 0L,
     censorDate = as.Date("2010-01-01"),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
@@ -142,8 +142,8 @@ test_that("test generateObservationPeriod", {
   )
   cdm <- generateObservationPeriod(
     cdm = cdm,
-    collapseEra = 5L,
-    persistenceWindow = 0L,
+    collapseDays = 5L,
+    persistenceDays = 0L,
     censorDate = as.Date("2010-01-01"),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
@@ -162,8 +162,8 @@ test_that("test generateObservationPeriod", {
   # persistence window
   cdm <- generateObservationPeriod(
     cdm = cdm,
-    collapseEra = 4L,
-    persistenceWindow = 3L,
+    collapseDays = 4L,
+    persistenceDays = 3L,
     censorDate = as.Date("2010-01-01"),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
@@ -180,8 +180,8 @@ test_that("test generateObservationPeriod", {
   )
   cdm <- generateObservationPeriod(
     cdm = cdm,
-    collapseEra = Inf,
-    persistenceWindow = 20L,
+    collapseDays = Inf,
+    persistenceDays = 20L,
     censorDate = as.Date("2010-01-01"),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
@@ -200,8 +200,8 @@ test_that("test generateObservationPeriod", {
   # censorDate
   cdm <- generateObservationPeriod(
     cdm = cdm,
-    collapseEra = Inf,
-    persistenceWindow = Inf,
+    collapseDays = Inf,
+    persistenceDays = Inf,
     censorDate = as.Date("2000-01-01") + 3000L,
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
@@ -218,8 +218,8 @@ test_that("test generateObservationPeriod", {
   )
   cdm <- generateObservationPeriod(
     cdm = cdm,
-    collapseEra = Inf,
-    persistenceWindow = 930,
+    collapseDays = Inf,
+    persistenceDays = 930,
     censorDate = as.Date("2000-01-01") + 1000L,
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
@@ -236,8 +236,8 @@ test_that("test generateObservationPeriod", {
   )
   cdm <- generateObservationPeriod(
     cdm = cdm,
-    collapseEra = Inf,
-    persistenceWindow = Inf,
+    collapseDays = Inf,
+    persistenceDays = Inf,
     censorDate = as.Date("2000-01-01") + 50L,
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
@@ -256,8 +256,8 @@ test_that("test generateObservationPeriod", {
   # censorAge
   cdm <- generateObservationPeriod(
     cdm = cdm,
-    collapseEra = Inf,
-    persistenceWindow = Inf,
+    collapseDays = Inf,
+    persistenceDays = Inf,
     censorDate = as.Date("2000-01-01") + 10000L,
     censorAge = 70L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
@@ -294,7 +294,7 @@ test_that("back to back observation periods", {
   # expect two observation periods by default as visits are back to back
   expect_no_error(
     cdm <- generateObservationPeriod(
-      cdm = cdm, collapseEra = 0L, persistenceWindow = 0L, censorAge = Inf,
+      cdm = cdm, collapseDays = 0L, persistenceDays = 0L, censorAge = Inf,
       recordsFrom = "visit_occurrence"
     )
   )
@@ -303,7 +303,7 @@ test_that("back to back observation periods", {
   # check with persistence 23 it is not collapsed
   expect_no_error(
     cdm <- generateObservationPeriod(
-      cdm = cdm, collapseEra = 24L, persistenceWindow = 23L, censorAge = Inf,
+      cdm = cdm, collapseDays = 24L, persistenceDays = 23L, censorAge = Inf,
       recordsFrom = "visit_occurrence"
     )
   )
@@ -312,7 +312,7 @@ test_that("back to back observation periods", {
   # check with persistence 24 it is collapsed
   expect_no_error(
     cdm <- generateObservationPeriod(
-      cdm = cdm, collapseEra = 24L, persistenceWindow = 24L, censorAge = Inf,
+      cdm = cdm, collapseDays = 24L, persistenceDays = 24L, censorAge = Inf,
       recordsFrom = "visit_occurrence"
     )
   )

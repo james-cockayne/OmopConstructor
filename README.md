@@ -71,8 +71,8 @@ cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 #> ℹ Adding drug_strength table.
 
 cdm <- generateObservationPeriod(cdm = cdm,
-                                 collapseEra = Inf,
-                                 persistenceWindow = Inf, 
+                                 collapseDays = Inf,
+                                 persistenceDays = Inf, 
                                  censorDate = as.Date("2010-01-01"), 
                                  censorAge = 120)
 cdm

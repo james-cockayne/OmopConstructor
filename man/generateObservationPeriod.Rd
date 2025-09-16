@@ -7,8 +7,8 @@
 \usage{
 generateObservationPeriod(
   cdm,
-  collapseEra = Inf,
-  persistenceWindow = Inf,
+  collapseDays = Inf,
+  persistenceDays = Inf,
   censorDate = Sys.time(),
   censorAge = 120L,
   recordsFrom = c("drug_exposure", "condition_occurrence", "procedure_occurrence",
@@ -19,9 +19,9 @@ generateObservationPeriod(
 \arguments{
 \item{cdm}{A \code{cdm_reference} object.}
 
-\item{collapseEra}{Distance between records to be collapsed.}
+\item{collapseDays}{Distance between records to be collapsed.}
 
-\item{persistenceWindow}{Number of days added at the end of an observation
+\item{persistenceDays}{Number of days added at the end of an observation
 period as persistence window.}
 
 \item{censorDate}{Date to censor all followup for individuals.}
