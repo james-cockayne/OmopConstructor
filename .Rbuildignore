@@ -7,3 +7,7 @@
 ^\.github$
 ^cran-comments\.md$
 ^README\.Rmd$
+Dockerfile
+example.env
+scripts
+drivers
