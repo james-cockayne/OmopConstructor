@@ -3,8 +3,8 @@
 #' `cdm_reference`.
 #'
 #' @param cdm A `cdm_reference` object.
-#' @param collapseEra Distance between records to be collapsed.
-#' @param persistenceWindow Number of days added at the end of an observation
+#' @param collapseDays Distance between records to be collapsed.
+#' @param persistenceDays Number of days added at the end of an observation
 #' period as persistence window.
 #' @param censorDate Date to censor all followup for individuals.
 #' @param censorAge Age to censor individuals if they reach a certain age.
@@ -19,8 +19,8 @@
 #' @export
 #'
 generateObservationPeriod <- function(cdm,
-                                      collapseEra = Inf,
-                                      persistenceWindow = Inf,
+                                      collapseDays = Inf,
+                                      persistenceDays = Inf,
                                       censorDate = Sys.time(),
                                       censorAge = 120L,
                                       recordsFrom = c(
@@ -32,8 +32,8 @@ generateObservationPeriod <- function(cdm,
                                       periodTypeConceptId = 32817L) {
   # initial checks
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
-  omopgenerics::assertNumeric(collapseEra, length = 1)
-  omopgenerics::assertNumeric(persistenceWindow, length = 1)
+  omopgenerics::assertNumeric(collapseDays, length = 1)
+  omopgenerics::assertNumeric(persistenceDays, length = 1)
   censorDate <- as.Date(censorDate)
   omopgenerics::assertDate(censorDate, length = 1)
   omopgenerics::assertNumeric(censorAge, length = 1)
@@ -45,16 +45,16 @@ generateObservationPeriod <- function(cdm,
   ))
   recordsFrom <- unique(recordsFrom)
   if (!is.infinite(censorAge)) censorAge <- as.integer(censorAge)
-  if (!is.infinite(collapseEra)) collapseEra <- as.integer(collapseEra)
-  if (!is.infinite(persistenceWindow)) persistenceWindow <- as.integer(persistenceWindow)
-  if (persistenceWindow > collapseEra) {
+  if (!is.infinite(collapseDays)) collapseDays <- as.integer(collapseDays)
+  if (!is.infinite(persistenceDays)) persistenceDays <- as.integer(persistenceDays)
+  if (persistenceDays > collapseDays) {
     cli::cli_abort(c(
-      x = "persistenceWindow ({persistenceWindow}) must be < collapseEra ({collapseEra})"
+      x = "persistenceDays ({persistenceDays}) must be < collapseDays ({collapseDays})"
     ))
   }
-  if (persistenceWindow == collapseEra & !is.infinite(collapseEra)) {
-    cli::cli_inform(c(i = "`persistenceWindow` ({.pkg {persistenceWindow}}) can not be equal to `collapseEra` ({.pkg {collapseEra}}) as back to back observation periods are not allowed, setting `collapseEra = {.pkg {collapseEra+1}}`."))
-    collapseEra <- collapseEra + 1
+  if (persistenceDays == collapseDays & !is.infinite(collapseDays)) {
+    cli::cli_inform(c(i = "`persistenceDays` ({.pkg {persistenceDays}}) can not be equal to `collapseDays` ({.pkg {collapseDays}}) as back to back observation periods are not allowed, setting `collapseDays = {.pkg {collapseDays+1}}`."))
+    collapseDays <- collapseDays + 1
   }
 
   if (length(recordsFrom) == 0) {
@@ -77,12 +77,12 @@ generateObservationPeriod <- function(cdm,
 
   name <- omopgenerics::uniqueTableName()
   x <- getTemptativeDates(
-    cdm = cdm, tables = recordsFrom, collapse = collapseEra,
-    window = persistenceWindow, name = name
+    cdm = cdm, tables = recordsFrom, collapse = collapseDays,
+    window = persistenceDays, name = name
   )
 
   # censor at censorDate
-  if (is.infinite(persistenceWindow)) {
+  if (is.infinite(persistenceDays)) {
     x <- x |>
       dplyr::mutate(end_date = .env$censorDate)
   } else {
