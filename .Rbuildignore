@@ -11,3 +11,4 @@ Dockerfile
 example.env
 scripts
 drivers
+^CRAN-SUBMISSION$
