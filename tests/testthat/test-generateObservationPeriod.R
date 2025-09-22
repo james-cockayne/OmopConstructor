@@ -273,6 +273,49 @@ test_that("test generateObservationPeriod", {
     )
   )
 
+  # expect error if persistence > collapse
+  expect_error(cdm <- generateObservationPeriod(
+    cdm = cdm,
+    collapseDays = 180,
+    persistenceDays = Inf,
+    censorDate = as.Date("2000-01-01") + 100L,
+    censorAge = 70L,
+    recordsFrom = c("visit_occurrence", "condition_occurrence")
+  ))
+  expect_error(cdm <- generateObservationPeriod(
+    cdm = cdm,
+    collapseDays = 180,
+    persistenceDays = 181,
+    censorDate = as.Date("2000-01-01") + 100L,
+    censorAge = 70L,
+    recordsFrom = c("visit_occurrence", "condition_occurrence")
+  ))
+
+  # empty recordsFrom
+  expect_warning(cdm <- generateObservationPeriod(
+    cdm = cdm,
+    collapseDays = Inf,
+    persistenceDays = Inf,
+    censorDate = as.Date("2000-01-01") + 100L,
+    censorAge = 70L,
+    recordsFrom = character()
+  ))
+
+  # check dates are casted
+  cdm$visit_occurrence <- cdm$visit_occurrence |>
+    dplyr::mutate(
+      visit_start_date = clock::add_days(x = .data$visit_start_date, n = 1L),
+      visit_end_date = clock::add_days(x = .data$visit_end_date, n = 1L)
+    )
+  expect_no_error(cdm <- generateObservationPeriod(
+    cdm = cdm,
+    collapseDays = Inf,
+    persistenceDays = Inf,
+    censorDate = as.Date("2000-01-01") + 100L,
+    censorAge = 70L,
+    recordsFrom = c("visit_occurrence", "condition_occurrence")
+  ))
+
   dropCreatedTables(cdm = cdm)
 })
 

@@ -41,7 +41,7 @@ generateObservationPeriod <- function(cdm,
   omopgenerics::assertChoice(recordsFrom, choices = c(
     "drug_exposure", "condition_occurrence", "procedure_occurrence",
     "visit_occurrence", "device_exposure", "measurement", "observation", "death"
-  ))
+  ), null = TRUE)
   recordsFrom <- unique(recordsFrom)
   if (!is.infinite(censorAge)) censorAge <- as.integer(censorAge)
   if (!is.infinite(collapseDays)) collapseDays <- as.integer(collapseDays)
@@ -57,6 +57,7 @@ generateObservationPeriod <- function(cdm,
   }
 
   if (length(recordsFrom) == 0) {
+    cli::cli_warn(c("!" = "`recordsFrom` is empty, empty {.pkg observation_period} created."))
     # return empty
     pid <- cdm$person |>
       utils::head(1) |>
