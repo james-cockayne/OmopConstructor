@@ -50,6 +50,6 @@ Suggests:
     testthat (>= 3.0.0),
     visOmopResults
 Config/testthat/edition: 3
-URL: https://ohdsi.io/OmopConstructor/
+URL: https://ohdsi.github.io/OmopConstructor/
 BugReports: https://github.com/ohdsi/OmopConstructor/issues
 VignetteBuilder: knitr

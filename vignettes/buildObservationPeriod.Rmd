@@ -30,7 +30,7 @@ Accurately defining observation period is essential for many types of studies. F
 
 For primary care or claims data, defining observation is relatively straightforward, as it can be based on enrollment and disenrollment dates. However, for datasets that only include secondary or tertiary care records, it is more complex. In these cases, the [HERON-UK](https://heron-uk.github.io/heron-uk/) network recommends assigning a single observation period per person, starting from their first record in the database (e.g., first hospital visit) and ending at the earliest of: (1) the patient’s death date; (2) a censoring age (commonly 120 years, but this may vary depending on the data source); or (3) a censoring date (typically the data extraction date).[^1]
 
-[^1]: <https://heron-uk.github.io/heron-uk/data_network/conventions.html#observation-period>
+[^1]: <https://heron-uk.github.io/heron-uk/data_conventions/observation_period.html>
 
 In this vignette, we will illustrate several approaches to defining the observation period:
 

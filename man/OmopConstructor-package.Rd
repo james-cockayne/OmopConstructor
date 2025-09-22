@@ -11,7 +11,7 @@ Provides functionality to construct standardised tables from health care data fo
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://ohdsi.io/OmopConstructor/}
+  \item \url{https://ohdsi.github.io/OmopConstructor/}
   \item Report bugs at \url{https://github.com/ohdsi/OmopConstructor/issues}
 }
 
