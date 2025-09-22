@@ -23,12 +23,7 @@ generateObservationPeriod <- function(cdm,
                                       persistenceDays = Inf,
                                       censorDate = NULL,
                                       censorAge = 120L,
-                                      recordsFrom = c(
-                                        "drug_exposure", "condition_occurrence",
-                                        "procedure_occurrence",
-                                        "visit_occurrence", "device_exposure",
-                                        "measurement", "observation", "death"
-                                      ),
+                                      recordsFrom = c("drug_exposure", "visit_occurrence"),
                                       periodTypeConceptId = 32817L) {
   # initial checks
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm)

@@ -174,7 +174,7 @@ This dataset has the `observation_period` table already populated, but we will c
 
 The `observation_period` table will be built using the [`generateObservationPeriod()`](https://ohdsi.github.io/OmopConstructor/reference/generateObservationPeriod.html) function and we will parametrise it in different ways for each case. Later we will summarise it using [OmopSketch](https://ohdsi.github.io/OmopSketch/) so we can compare the different definitions at the end.
 
-For all the definitions of observation period we will use `censorAge = 120` and `censorDate = as.Date("2020-01-01")`. Note also that if a death record is in the database the person will automatically be censored that day. Unless otherwise specified by adjusting the `recordsFrom` argument, records contributing to the observation period are searched for in the following tables: `drug_exposure`, `condition_occurrence`, `procedure_occurrence`, `visit_occurrence`, `device_exposure`, `measurement`, `observation`, and `death`.
+For all the definitions of observation period we will use `censorAge = 120` and `censorDate = as.Date("2020-01-01")`. Note also that if a death record is in the database the person will automatically be censored that day. Unless otherwise specified by adjusting the `recordsFrom` argument, records contributing to the observation period are searched for in the following tables: `drug_exposure` and `visit_occurrence`.
 
 ## First to extraction
 
