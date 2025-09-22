@@ -1,6 +1,5 @@
 
-#' Generate `observation_period` table from data recorded in the
-#' `cdm_reference`.
+#' Build `observation_period` table from data recorded in the `cdm_reference`
 #'
 #' @param cdm A `cdm_reference` object.
 #' @param collapseDays Distance between records to be collapsed.
@@ -18,13 +17,13 @@
 #' @return The `cdm_reference` object with a new `observation_period`.
 #' @export
 #'
-generateObservationPeriod <- function(cdm,
-                                      collapseDays = Inf,
-                                      persistenceDays = Inf,
-                                      censorDate = NULL,
-                                      censorAge = 120L,
-                                      recordsFrom = c("drug_exposure", "visit_occurrence"),
-                                      periodTypeConceptId = 32817L) {
+buildObservationPeriod <- function(cdm,
+                                   collapseDays = Inf,
+                                   persistenceDays = Inf,
+                                   censorDate = NULL,
+                                   censorAge = 120L,
+                                   recordsFrom = c("drug_exposure", "visit_occurrence"),
+                                   periodTypeConceptId = 32817L) {
   # initial checks
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
   omopgenerics::assertNumeric(collapseDays, length = 1)

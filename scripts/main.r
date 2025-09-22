@@ -1,5 +1,5 @@
 
-source("/code/generateObservationPeriod.R")
+source("/code/buildObservationPeriod.R")
 source("/code/collapseRecords.R")
 
 library(CDMConnector)
@@ -31,7 +31,7 @@ if (Sys.getenv("persistenceDays") == "" & Sys.getenv("persistenceWindow") != "")
   Sys.setenv(persistenceDays = Sys.getenv("persistenceWindow"))
 }
 
-generateObservationPeriod(
+buildObservationPeriod(
   cdm,
   collapseDays = as.numeric(Sys.getenv("collapseDays")),
   persistenceDays = as.numeric(Sys.getenv("persistenceDays")),
