@@ -47,16 +47,7 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-      # ---- Smoke tests ----
-      # We can't hit a real DB in CI, so we verify that R is available and
-      # the package loads, which proves the image "works" enough to run.
+      # check docker was created successfully
       - name: Check R + package load
         run: |
           docker run --rm omop-constructor:ci R -q -e "sessionInfo(); library(OmopConstructor); packageVersion('OmopConstructor')"
-
-      # If you have a CLI/entrypoint that doesn't require DB access,
-      # add a quick usage test here (non-zero exit on failure).
-      # Example (uncomment and adapt):
-      # - name: Run entrypoint help
-      #   run: |
-      #     docker run --rm omop-constructor:ci /bin/sh -lc 'command -v OmopConstructor || true'
