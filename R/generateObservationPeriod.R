@@ -34,7 +34,7 @@ generateObservationPeriod <- function(cdm,
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
   omopgenerics::assertNumeric(collapseDays, length = 1)
   omopgenerics::assertNumeric(persistenceDays, length = 1)
-  censorDate <- validateCensorDate(censorDate)
+  censorDate <- validateCensorDate(censorDate = censorDate, cdm = cdm)
   omopgenerics::assertNumeric(censorAge, length = 1)
   omopgenerics::assertNumeric(periodTypeConceptId, integerish = TRUE, length = 1)
   periodTypeConceptId <- as.integer(periodTypeConceptId)
@@ -250,7 +250,7 @@ validateCensorDate <- function(censorDate, cdm, call = parent.frame()) {
         dplyr::collect()
       if (nrow(cdmSource) == 1) {
         candidate1 <- as.Date(cdmSource$source_release_date)
-        if (checkDate(condidate1)) {
+        if (checkDate(candidate1)) {
           censorDate <- candidate1
           cli::cli_inform(c(i = "Using censorDate {.pkg {censorDate}} from {.emph source_release_date}."))
         } else {
@@ -263,7 +263,7 @@ validateCensorDate <- function(censorDate, cdm, call = parent.frame()) {
       }
     }
     if (is.null(censorDate)) {
-      censorDate <- Sys.Date()
+      censorDate <- as.Date(Sys.Date())
       cli::cli_inform(c(i = "Using current date as censorDate: {.pkg {censorDate}}."))
     }
   } else {
@@ -280,7 +280,7 @@ validateCensorDate <- function(censorDate, cdm, call = parent.frame()) {
 checkDate <- function(date) {
   check <- FALSE
   if (inherits(date, "Date")) {
-    check <- date >= as.Date("1950-01-01") && date <= Sys.Date()
+    check <- isTRUE(date >= as.Date("1950-01-01") && date <= Sys.Date())
   }
   return(check)
 }
