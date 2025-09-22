@@ -1,0 +1,62 @@
+name: Docker build & test
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Cache layers to speed up CI
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build image (no push)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          load: true
+          tags: omop-constructor:ci
+          build-args: |
+            CI=true
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      # ---- Smoke tests ----
+      # We can't hit a real DB in CI, so we verify that R is available and
+      # the package loads, which proves the image "works" enough to run.
+      - name: Check R + package load
+        run: |
+          docker run --rm omop-constructor:ci R -q -e "sessionInfo(); library(OmopConstructor); packageVersion('OmopConstructor')"
+
+      # If you have a CLI/entrypoint that doesn't require DB access,
+      # add a quick usage test here (non-zero exit on failure).
+      # Example (uncomment and adapt):
+      # - name: Run entrypoint help
+      #   run: |
+      #     docker run --rm omop-constructor:ci /bin/sh -lc 'command -v OmopConstructor || true'

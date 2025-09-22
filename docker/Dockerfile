@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN R -e "install.packages(c('clock', 'PatientProfiles', 'CDMConnector', 'DatabaseConnector'))"
+RUN R -e "install.packages(c('CDMConnector', 'DatabaseConnector', 'pak'))"
+RUN R -e "pak::pkg_install('ohdsi/OmopConstructor')"
 
 COPY drivers/ drivers/
 COPY scripts/ .
