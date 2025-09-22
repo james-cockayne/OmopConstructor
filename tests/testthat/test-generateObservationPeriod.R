@@ -321,3 +321,96 @@ test_that("back to back observation periods", {
   dropCreatedTables(cdm = cdm)
 })
 
+test_that("censorDate from cdm_source", {
+  cdm <- omock::mockCdmFromTables(
+    tables = list(
+      visit_occurrence = dplyr::tibble(
+        visit_occurrence_id = 1,
+        person_id = 1L,
+        visit_start_date = as.Date("2000-01-01"),
+        visit_end_date = as.Date("2000-01-01"),
+        visit_concept_id = 0L,
+        visit_type_concept_id = 0L
+      ),
+      cdm_source = dplyr::tibble(
+        cdm_source_name = "mock",
+        cdm_source_abbreviation = "MOCK",
+        cdm_holder = "OHDSI",
+        source_description = "mock db",
+        source_documentation_reference = "http://ohdsi.github.io/omock",
+        cdm_etl_reference = "-",
+        source_release_date = as.Date("2015-01-01"),
+        cdm_release_date = as.Date("2015-06-01"),
+        cdm_version = "5.3",
+        vocabulary_version = "v5.0 18-JAN-19"
+      )
+    )
+  ) |>
+    # issue in omock
+    suppressWarnings() |>
+    copyCdm()
+
+  # expect censor at provided date
+  censorDate <- as.Date("2020-01-01")
+  expect_no_error(
+    cdm <- generateObservationPeriod(
+      cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
+      recordsFrom = "visit_occurrence", censorDate = censorDate
+    )
+  )
+  expect_identical(omopgenerics::numberRecords(cdm$observation_period), 1L)
+  expect_identical(
+    cdm$observation_period |> dplyr::pull("observation_period_end_date"),
+    censorDate
+  )
+
+  # expect censor at source_release_date
+  expect_message(expect_no_error(
+    cdm <- generateObservationPeriod(
+      cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
+      recordsFrom = "visit_occurrence"
+    )
+  ))
+  expect_identical(omopgenerics::numberRecords(cdm$observation_period), 1L)
+  expect_identical(
+    cdm$observation_period |> dplyr::pull("observation_period_end_date"),
+    as.Date("2015-01-01")
+  )
+
+  # NA to source_release_date
+  cdm$cdm_source <- cdm$cdm_source |>
+    dplyr::mutate(source_release_date = as.Date(NA_character_))
+
+  # expect censor at cdm_release_date
+  expect_message(expect_no_error(
+    cdm <- generateObservationPeriod(
+      cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
+      recordsFrom = "visit_occurrence"
+    )
+  ))
+  expect_identical(omopgenerics::numberRecords(cdm$observation_period), 1L)
+  expect_identical(
+    cdm$observation_period |> dplyr::pull("observation_period_end_date"),
+    as.Date("2015-06-01")
+  )
+
+  # NA to cdm_release_date
+  cdm$cdm_source <- cdm$cdm_source |>
+    dplyr::mutate(cdm_release_date = as.Date(NA_character_))
+
+  # expect to censor at extract date
+  expect_message(expect_no_error(
+    cdm <- generateObservationPeriod(
+      cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
+      recordsFrom = "visit_occurrence"
+    )
+  ))
+  expect_identical(omopgenerics::numberRecords(cdm$observation_period), 1L)
+  expect_identical(
+    cdm$observation_period |> dplyr::pull("observation_period_end_date"),
+    Sys.Date()
+  )
+
+  dropCreatedTables(cdm = cdm)
+})
+
