@@ -5,7 +5,9 @@
 #' @param collapseDays Distance between records to be collapsed.
 #' @param persistenceDays Number of days added at the end of an observation
 #' period as persistence window.
-#' @param censorDate Date to censor all followup for individuals.
+#' @param dateRange Range of dates to be considered. By default '1900-01-01' is
+#' used as start date, whereas for censor date the first available of
+#' `source_release_date`, `cdm_release_date`, and `Sys.Date()` will be used.
 #' @param censorAge Age to censor individuals if they reach a certain age.
 #' The last day in observation of the individual will be the day prior to their
 #' birthday.
@@ -20,7 +22,7 @@
 buildObservationPeriod <- function(cdm,
                                    collapseDays = Inf,
                                    persistenceDays = Inf,
-                                   censorDate = NULL,
+                                   dateRange = as.Date(c("1900-01-01", NA)),
                                    censorAge = 120L,
                                    recordsFrom = c("drug_exposure", "visit_occurrence"),
                                    periodTypeConceptId = 32817L) {
@@ -28,7 +30,7 @@ buildObservationPeriod <- function(cdm,
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
   omopgenerics::assertNumeric(collapseDays, length = 1)
   omopgenerics::assertNumeric(persistenceDays, length = 1)
-  censorDate <- validateCensorDate(censorDate = censorDate, cdm = cdm)
+  dateRange <- validateDateRange(dateRange = dateRange, cdm = cdm)
   omopgenerics::assertNumeric(censorAge, length = 1)
   omopgenerics::assertNumeric(periodTypeConceptId, integerish = TRUE, length = 1)
   periodTypeConceptId <- as.integer(periodTypeConceptId)
@@ -75,7 +77,15 @@ buildObservationPeriod <- function(cdm,
     window = persistenceDays, name = name
   )
 
-  # censor at censorDate
+  # only dates after start date
+  startDate <- dateRange[1]
+  x <- x |>
+    dplyr::mutate(start_date = dplyr::if_else(
+      .data$start_date <= .env$startDate, .env$startDate, .data$start_date
+    ))
+
+  # censor at censor date
+  censorDate <- dateRange[2]
   if (is.infinite(persistenceDays)) {
     x <- x |>
       dplyr::mutate(end_date = .env$censorDate)
@@ -238,39 +248,51 @@ isColDate <- function(x, col) {
     dplyr::pull() |>
     dplyr::type_sum() == "date"
 }
-validateCensorDate <- function(censorDate, cdm, call = parent.frame()) {
-  if (is.null(censorDate)) {
+validateDateRange <- function(dateRange, cdm, call = parent.frame()) {
+  if (is.null(dateRange)) {
+    dateRange <- as.Date(c(NA, NA))
+  } else {
+    dateRange <- as.Date(dateRange)
+  }
+
+  # check dates
+  omopgenerics::assertDate(dateRange, length = 2, na = TRUE, call = call)
+
+  # start date
+  if (is.na(dateRange[1])) {
+    dateRange[1] <- as.Date("1900-01-01")
+    cli::cli_inform(c(i = "Using start date as {.pkg 1900-01-01} please populate dateRange otherwise."))
+  }
+
+  if (is.na(dateRange[2])) {
     if ("cdm_source" %in% names(cdm)) {
       cdmSource <- cdm$cdm_source |>
         dplyr::collect()
       if (nrow(cdmSource) == 1) {
         candidate1 <- as.Date(cdmSource$source_release_date)
         if (checkDate(candidate1)) {
-          censorDate <- candidate1
-          cli::cli_inform(c(i = "Using censorDate {.pkg {censorDate}} from {.emph source_release_date}."))
+          dateRange[2] <- candidate1
+          cli::cli_inform(c(i = "Using censor date as {.pkg {dateRange[2]}} from {.emph source_release_date}."))
         } else {
           candidate2 <- as.Date(cdmSource$cdm_release_date)
           if (checkDate(candidate2)) {
-            censorDate <- candidate2
-            cli::cli_inform(c(i = "Using censorDate {.pkg {censorDate}} from {.emph cdm_release_date}."))
+            dateRange[2] <- candidate2
+            cli::cli_inform(c(i = "Using censor date as {.pkg {dateRange[2]}} from {.emph cdm_release_date}."))
           }
         }
       }
     }
-    if (is.null(censorDate)) {
-      censorDate <- as.Date(Sys.Date())
-      cli::cli_inform(c(i = "Using current date as censorDate: {.pkg {censorDate}}."))
+    if (is.na(dateRange[2])) {
+      dateRange[2] <- as.Date(Sys.Date())
+      cli::cli_inform(c(i = "Using current date as censor date: {.pkg {dateRange[2]}}."))
     }
-  } else {
-    censorDate <- as.Date(censorDate)
-    omopgenerics::assertDate(censorDate, length = 1, call = call)
   }
 
-  if (censorDate > Sys.Date()) {
-    cli::cli_warn(c("!" = "Unrealistic censorDate ({censorDate}) in the future provided."))
+  if (dateRange[2] > Sys.Date()) {
+    cli::cli_warn(c("!" = "Unrealistic censor date ({dateRange[2]}) in the future provided."))
   }
 
-  return(censorDate)
+  return(dateRange)
 }
 checkDate <- function(date) {
   check <- FALSE
