@@ -11,8 +11,6 @@ RUN apt-get update && apt-get install -y \
 RUN R -e "install.packages(c('CDMConnector', 'DatabaseConnector', 'pak'))"
 RUN R -e "pak::pkg_install('ohdsi/OmopConstructor')"
 
-COPY drivers/ drivers/
-COPY scripts/ .
-COPY R .
+COPY docker/scripts .
 
 ENTRYPOINT ["/bin/bash", "-c", "Rscript main.r"]
