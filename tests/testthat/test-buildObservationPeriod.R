@@ -52,7 +52,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = 0L,
     persistenceDays = 0L,
-    censorDate = as.Date("2010-01-01"),
+    dateRange = as.Date(c("1900-01-01", "2010-01-01")),
     censorAge = 120L,
     recordsFrom = "visit_occurrence"
   ))
@@ -70,7 +70,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = 0L,
     persistenceDays = 0L,
-    censorDate = as.Date("2010-01-01"),
+    dateRange = as.Date(c("1900-01-01", "2010-01-01")),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   ))
@@ -88,7 +88,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = 0L,
     persistenceDays = 0L,
-    censorDate = as.Date("2010-01-01"),
+    dateRange = as.Date(c("1900-01-01", "2010-01-01")),
     censorAge = 120L,
     recordsFrom = c("condition_occurrence", "death")
   ))
@@ -108,7 +108,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = 0L,
     persistenceDays = 0L,
-    censorDate = as.Date("2010-01-01"),
+    dateRange = as.Date(c("1900-01-01", "2010-01-01")),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   ))
@@ -126,7 +126,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = 4L,
     persistenceDays = 0L,
-    censorDate = as.Date("2010-01-01"),
+    dateRange = as.Date(c("1900-01-01", "2010-01-01")),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
@@ -144,7 +144,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = 5L,
     persistenceDays = 0L,
-    censorDate = as.Date("2010-01-01"),
+    dateRange = as.Date(c("1900-01-01", "2010-01-01")),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
@@ -164,7 +164,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = 4L,
     persistenceDays = 3L,
-    censorDate = as.Date("2010-01-01"),
+    dateRange = as.Date(c("1900-01-01", "2010-01-01")),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
@@ -182,7 +182,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = 20L,
-    censorDate = as.Date("2010-01-01"),
+    dateRange = as.Date(c("1900-01-01", "2010-01-01")),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
@@ -197,12 +197,12 @@ test_that("test buildObservationPeriod", {
     )
   )
 
-  # censorDate
+  # dateRange
   cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = Inf,
-    censorDate = as.Date("2000-01-01") + 3000L,
+    dateRange = c(as.Date("1900-01-01"), as.Date("2000-01-01") + 3000L),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
@@ -220,7 +220,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = 930,
-    censorDate = as.Date("2000-01-01") + 1000L,
+    dateRange = c(as.Date("1900-01-01"), as.Date("2000-01-01") + 1000L),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
@@ -238,7 +238,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = Inf,
-    censorDate = as.Date("2000-01-01") + 50L,
+    dateRange = c(as.Date("1900-01-01"), as.Date("2000-01-01") + 50L),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   )
@@ -258,7 +258,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = Inf,
-    censorDate = as.Date("2000-01-01") + 10000L,
+    dateRange = c(as.Date("1900-01-01"), as.Date("2000-01-01") + 10000L),
     censorAge = 70L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   ))
@@ -278,7 +278,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = 180,
     persistenceDays = Inf,
-    censorDate = as.Date("2000-01-01") + 100L,
+    dateRange = c(as.Date("1900-01-01"), as.Date("2000-01-01") + 100L),
     censorAge = 70L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   ))
@@ -286,7 +286,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = 180,
     persistenceDays = 181,
-    censorDate = as.Date("2000-01-01") + 100L,
+    dateRange = c(as.Date("1900-01-01"), as.Date("2000-01-01") + 100L),
     censorAge = 70L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   ))
@@ -296,7 +296,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = Inf,
-    censorDate = as.Date("2000-01-01") + 100L,
+    dateRange = c(as.Date("1900-01-01"), as.Date("2000-01-01") + 100L),
     censorAge = 70L,
     recordsFrom = character()
   ))
@@ -311,7 +311,7 @@ test_that("test buildObservationPeriod", {
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = Inf,
-    censorDate = as.Date("2000-01-01") + 100L,
+    dateRange = c(as.Date("1900-01-01"), as.Date("2000-01-01") + 100L),
     censorAge = 70L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   ))
@@ -364,14 +364,14 @@ test_that("back to back observation periods", {
   dropCreatedTables(cdm = cdm)
 })
 
-test_that("censorDate from cdm_source", {
+test_that("dateRange from cdm_source", {
   cdm <- omock::mockCdmFromTables(
     tables = list(
       visit_occurrence = dplyr::tibble(
         visit_occurrence_id = 1,
         person_id = 1L,
         visit_start_date = as.Date("2000-01-01"),
-        visit_end_date = as.Date("2000-01-01"),
+        visit_end_date = as.Date("2000-12-31"),
         visit_concept_id = 0L,
         visit_type_concept_id = 0L
       ),
@@ -394,17 +394,16 @@ test_that("censorDate from cdm_source", {
     copyCdm()
 
   # expect censor at provided date
-  censorDate <- as.Date("2020-01-01")
   expect_no_error(
     cdm <- buildObservationPeriod(
       cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
-      recordsFrom = "visit_occurrence", censorDate = censorDate
+      recordsFrom = "visit_occurrence", dateRange = as.Date(c("1900-01-01", "2020-01-01"))
     )
   )
   expect_identical(omopgenerics::numberRecords(cdm$observation_period), 1L)
   expect_identical(
     cdm$observation_period |> dplyr::pull("observation_period_end_date"),
-    censorDate
+    as.Date("2020-01-01")
   )
 
   # expect censor at source_release_date
@@ -452,6 +451,40 @@ test_that("censorDate from cdm_source", {
   expect_identical(
     cdm$observation_period |> dplyr::pull("observation_period_end_date"),
     Sys.Date()
+  )
+
+  # expect to start at start date
+  expect_message(expect_no_error(
+    cdm <- buildObservationPeriod(
+      cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
+      recordsFrom = "visit_occurrence", dateRange = c("2000-05-01", NA)
+    )
+  ))
+  expect_identical(omopgenerics::numberRecords(cdm$observation_period), 1L)
+  expect_identical(
+    cdm$observation_period |> dplyr::pull("observation_period_end_date"),
+    Sys.Date()
+  )
+  expect_identical(
+    cdm$observation_period |> dplyr::pull("observation_period_start_date"),
+    as.Date("2000-05-01")
+  )
+
+  # expect to start at start date
+  expect_no_error(
+    cdm <- buildObservationPeriod(
+      cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
+      recordsFrom = "visit_occurrence", dateRange = c("2000-05-01", "2010-01-01")
+    )
+  )
+  expect_identical(omopgenerics::numberRecords(cdm$observation_period), 1L)
+  expect_identical(
+    cdm$observation_period |> dplyr::pull("observation_period_end_date"),
+    as.Date("2010-01-01")
+  )
+  expect_identical(
+    cdm$observation_period |> dplyr::pull("observation_period_start_date"),
+    as.Date("2000-05-01")
   )
 
   dropCreatedTables(cdm = cdm)

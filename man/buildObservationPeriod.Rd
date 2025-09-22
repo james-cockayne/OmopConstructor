@@ -8,7 +8,7 @@ buildObservationPeriod(
   cdm,
   collapseDays = Inf,
   persistenceDays = Inf,
-  censorDate = NULL,
+  dateRange = as.Date(c("1900-01-01", NA)),
   censorAge = 120L,
   recordsFrom = c("drug_exposure", "visit_occurrence"),
   periodTypeConceptId = 32817L
@@ -22,7 +22,9 @@ buildObservationPeriod(
 \item{persistenceDays}{Number of days added at the end of an observation
 period as persistence window.}
 
-\item{censorDate}{Date to censor all followup for individuals.}
+\item{dateRange}{Range of dates to be considered. By default '1900-01-01' is
+used as start date, whereas for censor date the first available of
+\code{source_release_date}, \code{cdm_release_date}, and \code{Sys.Date()} will be used.}
 
 \item{censorAge}{Age to censor individuals if they reach a certain age.
 The last day in observation of the individual will be the day prior to their

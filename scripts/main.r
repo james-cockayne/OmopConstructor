@@ -34,5 +34,5 @@ if (Sys.getenv("persistenceDays") == "" & Sys.getenv("persistenceWindow") != "")
 buildObservationPeriod(
   cdm,
   collapseDays = as.numeric(Sys.getenv("collapseDays")),
-  persistenceDays = as.numeric(Sys.getenv("persistenceDays")),
+  persistenceDays = as.numeric(Sys.getenv("persistenceDays"))
 )

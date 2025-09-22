@@ -174,7 +174,7 @@ This dataset has the `observation_period` table already populated, but we will c
 
 The `observation_period` table will be built using the [`buildObservationPeriod()`](https://ohdsi.github.io/OmopConstructor/reference/buildObservationPeriod.html) function and we will parametrise it in different ways for each case. Later we will summarise it using [OmopSketch](https://ohdsi.github.io/OmopSketch/) so we can compare the different definitions at the end.
 
-For all the definitions of observation period we will use `censorAge = 120` and `censorDate = as.Date("2020-01-01")`. Note also that if a death record is in the database the person will automatically be censored that day. Unless otherwise specified by adjusting the `recordsFrom` argument, records contributing to the observation period are searched for in the following tables: `drug_exposure` and `visit_occurrence`.
+For all the definitions of observation period we will use `censorAge = 120` and `dateRange = as.Date(c("1900-01-01", "2020-01-01"))`. Note also that if a death record is in the database the person will automatically be censored that day. Unless otherwise specified by adjusting the `recordsFrom` argument, records contributing to the observation period are searched for in the following tables: `drug_exposure` and `visit_occurrence`.
 
 ## First to extraction
 
@@ -186,7 +186,7 @@ cdm <- buildObservationPeriod(
   collapseDays = Inf,
   persistenceDays = Inf,
   censorAge = 120,
-  censorDate = as.Date("2020-01-01")
+  dateRange = as.Date(c("1900-01-01", "2020-01-01"))
 )
 
 # summarise the generated observation_period using OmopSketch
@@ -211,7 +211,7 @@ cdm <- buildObservationPeriod(
   collapseDays = Inf,
   persistenceDays = 0,
   censorAge = 120,
-  censorDate = as.Date("2020-01-01")
+  dateRange = as.Date(c("1900-01-01", "2020-01-01"))
 )
 
 # summarise the generated observation_period using OmopSketch
@@ -236,7 +236,7 @@ cdm <- buildObservationPeriod(
   collapseDays = 0,
   persistenceDays = 0,
   censorAge = 120,
-  censorDate = as.Date("2020-01-01"),
+  dateRange = as.Date(c("1900-01-01", "2020-01-01")),
   recordsFrom = "visit_occurrence"
 )
 
@@ -262,7 +262,7 @@ cdm <- buildObservationPeriod(
   collapseDays = 180,
   persistenceDays = 0,
   censorAge = 120,
-  censorDate = as.Date("2020-01-01")
+  dateRange = as.Date(c("1900-01-01", "2020-01-01"))
 )
 
 # summarise the generated observation_period using OmopSketch
@@ -287,7 +287,7 @@ cdm <- buildObservationPeriod(
   collapseDays = 180,
   persistenceDays = 179,
   censorAge = 120,
-  censorDate = as.Date("2020-01-01")
+  dateRange = as.Date(c("1900-01-01", "2020-01-01"))
 )
 
 # summarise the generated observation_period using OmopSketch
@@ -312,7 +312,7 @@ cdm <- buildObservationPeriod(
   collapseDays = 365,
   persistenceDays = 364,
   censorAge = 120,
-  censorDate = as.Date("2020-01-01")
+  dateRange = as.Date(c("1900-01-01", "2020-01-01"))
 )
 
 # summarise the generated observation_period using OmopSketch
@@ -337,7 +337,7 @@ cdm <- buildObservationPeriod(
   collapseDays = Inf,
   persistenceDays = Inf,
   censorAge = 18,
-  censorDate = as.Date("2020-01-01")
+  dateRange = as.Date(c("1900-01-01", "2020-01-01"))
 )
 
 # summarise the generated observation_period using OmopSketch
