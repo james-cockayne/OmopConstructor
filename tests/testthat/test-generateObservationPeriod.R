@@ -48,14 +48,14 @@ test_that("test generateObservationPeriod", {
     copyCdm()
 
   # different tables
-  cdm <- generateObservationPeriod(
+  expect_message(cdm <- generateObservationPeriod(
     cdm = cdm,
     collapseDays = 0L,
     persistenceDays = 0L,
     censorDate = as.Date("2010-01-01"),
     censorAge = 120L,
     recordsFrom = "visit_occurrence"
-  )
+  ))
   expect_equal(
     collectOp(cdm$observation_period),
     dplyr::tibble(
@@ -66,14 +66,14 @@ test_that("test generateObservationPeriod", {
       period_type_concept_id = 32817L
     )
   )
-  cdm <- generateObservationPeriod(
+  expect_message(cdm <- generateObservationPeriod(
     cdm = cdm,
     collapseDays = 0L,
     persistenceDays = 0L,
     censorDate = as.Date("2010-01-01"),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
-  )
+  ))
   expect_equal(
     collectOp(cdm$observation_period),
     dplyr::tibble(
@@ -84,14 +84,14 @@ test_that("test generateObservationPeriod", {
       period_type_concept_id = 32817L
     )
   )
-  cdm <- generateObservationPeriod(
+  expect_message(cdm <- generateObservationPeriod(
     cdm = cdm,
     collapseDays = 0L,
     persistenceDays = 0L,
     censorDate = as.Date("2010-01-01"),
     censorAge = 120L,
     recordsFrom = c("condition_occurrence", "death")
-  )
+  ))
   expect_equal(
     collectOp(cdm$observation_period),
     dplyr::tibble(
@@ -104,14 +104,14 @@ test_that("test generateObservationPeriod", {
   )
 
   # collapse era
-  cdm <- generateObservationPeriod(
+  expect_message(cdm <- generateObservationPeriod(
     cdm = cdm,
     collapseDays = 0L,
     persistenceDays = 0L,
     censorDate = as.Date("2010-01-01"),
     censorAge = 120L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
-  )
+  ))
   expect_equal(
     collectOp(cdm$observation_period),
     dplyr::tibble(
@@ -254,14 +254,14 @@ test_that("test generateObservationPeriod", {
   )
 
   # censorAge
-  cdm <- generateObservationPeriod(
+  expect_warning(cdm <- generateObservationPeriod(
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = Inf,
     censorDate = as.Date("2000-01-01") + 10000L,
     censorAge = 70L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
-  )
+  ))
   expect_equal(
     collectOp(cdm$observation_period),
     dplyr::tibble(
@@ -272,6 +272,49 @@ test_that("test generateObservationPeriod", {
       period_type_concept_id = 32817L
     )
   )
+
+  # expect error if persistence > collapse
+  expect_error(cdm <- generateObservationPeriod(
+    cdm = cdm,
+    collapseDays = 180,
+    persistenceDays = Inf,
+    censorDate = as.Date("2000-01-01") + 100L,
+    censorAge = 70L,
+    recordsFrom = c("visit_occurrence", "condition_occurrence")
+  ))
+  expect_error(cdm <- generateObservationPeriod(
+    cdm = cdm,
+    collapseDays = 180,
+    persistenceDays = 181,
+    censorDate = as.Date("2000-01-01") + 100L,
+    censorAge = 70L,
+    recordsFrom = c("visit_occurrence", "condition_occurrence")
+  ))
+
+  # empty recordsFrom
+  expect_warning(cdm <- generateObservationPeriod(
+    cdm = cdm,
+    collapseDays = Inf,
+    persistenceDays = Inf,
+    censorDate = as.Date("2000-01-01") + 100L,
+    censorAge = 70L,
+    recordsFrom = character()
+  ))
+
+  # check dates are casted
+  cdm$visit_occurrence <- cdm$visit_occurrence |>
+    dplyr::mutate(
+      visit_start_date = clock::add_days(x = .data$visit_start_date, n = 1L),
+      visit_end_date = clock::add_days(x = .data$visit_end_date, n = 1L)
+    )
+  expect_no_error(cdm <- generateObservationPeriod(
+    cdm = cdm,
+    collapseDays = Inf,
+    persistenceDays = Inf,
+    censorDate = as.Date("2000-01-01") + 100L,
+    censorAge = 70L,
+    recordsFrom = c("visit_occurrence", "condition_occurrence")
+  ))
 
   dropCreatedTables(cdm = cdm)
 })
@@ -292,31 +335,125 @@ test_that("back to back observation periods", {
     copyCdm()
 
   # expect two observation periods by default as visits are back to back
-  expect_no_error(
+  expect_message(expect_message(expect_no_error(
     cdm <- generateObservationPeriod(
       cdm = cdm, collapseDays = 0L, persistenceDays = 0L, censorAge = Inf,
       recordsFrom = "visit_occurrence"
     )
-  )
+  )))
   expect_identical(omopgenerics::numberRecords(cdm$observation_period), 2L)
 
   # check with persistence 23 it is not collapsed
-  expect_no_error(
+  expect_message(expect_no_error(
     cdm <- generateObservationPeriod(
       cdm = cdm, collapseDays = 24L, persistenceDays = 23L, censorAge = Inf,
       recordsFrom = "visit_occurrence"
     )
-  )
+  ))
   expect_identical(omopgenerics::numberRecords(cdm$observation_period), 2L)
 
   # check with persistence 24 it is collapsed
-  expect_no_error(
+  expect_message(expect_message(expect_no_error(
     cdm <- generateObservationPeriod(
       cdm = cdm, collapseDays = 24L, persistenceDays = 24L, censorAge = Inf,
       recordsFrom = "visit_occurrence"
     )
-  )
+  )))
   expect_identical(omopgenerics::numberRecords(cdm$observation_period), 1L)
 
   dropCreatedTables(cdm = cdm)
 })
+
+test_that("censorDate from cdm_source", {
+  cdm <- omock::mockCdmFromTables(
+    tables = list(
+      visit_occurrence = dplyr::tibble(
+        visit_occurrence_id = 1,
+        person_id = 1L,
+        visit_start_date = as.Date("2000-01-01"),
+        visit_end_date = as.Date("2000-01-01"),
+        visit_concept_id = 0L,
+        visit_type_concept_id = 0L
+      ),
+      cdm_source = dplyr::tibble(
+        cdm_source_name = "mock",
+        cdm_source_abbreviation = "MOCK",
+        cdm_holder = "OHDSI",
+        source_description = "mock db",
+        source_documentation_reference = "http://ohdsi.github.io/omock",
+        cdm_etl_reference = "-",
+        source_release_date = as.Date("2015-01-01"),
+        cdm_release_date = as.Date("2015-06-01"),
+        cdm_version = "5.3",
+        vocabulary_version = "v5.0 18-JAN-19"
+      )
+    )
+  ) |>
+    # issue in omock
+    suppressWarnings() |>
+    copyCdm()
+
+  # expect censor at provided date
+  censorDate <- as.Date("2020-01-01")
+  expect_no_error(
+    cdm <- generateObservationPeriod(
+      cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
+      recordsFrom = "visit_occurrence", censorDate = censorDate
+    )
+  )
+  expect_identical(omopgenerics::numberRecords(cdm$observation_period), 1L)
+  expect_identical(
+    cdm$observation_period |> dplyr::pull("observation_period_end_date"),
+    censorDate
+  )
+
+  # expect censor at source_release_date
+  expect_message(expect_no_error(
+    cdm <- generateObservationPeriod(
+      cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
+      recordsFrom = "visit_occurrence"
+    )
+  ))
+  expect_identical(omopgenerics::numberRecords(cdm$observation_period), 1L)
+  expect_identical(
+    cdm$observation_period |> dplyr::pull("observation_period_end_date"),
+    as.Date("2015-01-01")
+  )
+
+  # NA to source_release_date
+  cdm$cdm_source <- cdm$cdm_source |>
+    dplyr::mutate(source_release_date = as.Date(NA_character_))
+
+  # expect censor at cdm_release_date
+  expect_message(expect_no_error(
+    cdm <- generateObservationPeriod(
+      cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
+      recordsFrom = "visit_occurrence"
+    )
+  ))
+  expect_identical(omopgenerics::numberRecords(cdm$observation_period), 1L)
+  expect_identical(
+    cdm$observation_period |> dplyr::pull("observation_period_end_date"),
+    as.Date("2015-06-01")
+  )
+
+  # NA to cdm_release_date
+  cdm$cdm_source <- cdm$cdm_source |>
+    dplyr::mutate(cdm_release_date = as.Date(NA_character_))
+
+  # expect to censor at extract date
+  expect_message(expect_no_error(
+    cdm <- generateObservationPeriod(
+      cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
+      recordsFrom = "visit_occurrence"
+    )
+  ))
+  expect_identical(omopgenerics::numberRecords(cdm$observation_period), 1L)
+  expect_identical(
+    cdm$observation_period |> dplyr::pull("observation_period_end_date"),
+    Sys.Date()
+  )
+
+  dropCreatedTables(cdm = cdm)
+})
+

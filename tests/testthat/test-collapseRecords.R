@@ -116,7 +116,7 @@ test_that("Test collapse records", {
   )
 
   # no by
-  expect_equal(
+  expect_message(expect_equal(
     cdm$test |>
       collapseRecords(
         startDate = "start_date",
@@ -129,8 +129,8 @@ test_that("Test collapse records", {
     dplyr::tibble(
       start_date = as.Date("2000-01-01"), end_date = as.Date("2000-02-17")
     )
-  )
-  expect_equal(
+  ))
+  expect_message(expect_equal(
     cdm$test |>
       collapseRecords(
         startDate = "start_date",
@@ -143,7 +143,7 @@ test_that("Test collapse records", {
     dplyr::tibble(
       start_date = as.Date("2000-01-01"), end_date = as.Date("2000-02-17")
     )
-  )
+  ))
 
   # multiple by
   x <- dplyr::tibble(

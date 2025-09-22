@@ -9,7 +9,7 @@ generateObservationPeriod(
   cdm,
   collapseDays = Inf,
   persistenceDays = Inf,
-  censorDate = Sys.time(),
+  censorDate = NULL,
   censorAge = 120L,
   recordsFrom = c("drug_exposure", "condition_occurrence", "procedure_occurrence",
     "visit_occurrence", "device_exposure", "measurement", "observation", "death"),

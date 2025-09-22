@@ -21,7 +21,7 @@
 generateObservationPeriod <- function(cdm,
                                       collapseDays = Inf,
                                       persistenceDays = Inf,
-                                      censorDate = Sys.time(),
+                                      censorDate = NULL,
                                       censorAge = 120L,
                                       recordsFrom = c(
                                         "drug_exposure", "condition_occurrence",
@@ -34,15 +34,14 @@ generateObservationPeriod <- function(cdm,
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
   omopgenerics::assertNumeric(collapseDays, length = 1)
   omopgenerics::assertNumeric(persistenceDays, length = 1)
-  censorDate <- as.Date(censorDate)
-  omopgenerics::assertDate(censorDate, length = 1)
+  censorDate <- validateCensorDate(censorDate = censorDate, cdm = cdm)
   omopgenerics::assertNumeric(censorAge, length = 1)
   omopgenerics::assertNumeric(periodTypeConceptId, integerish = TRUE, length = 1)
   periodTypeConceptId <- as.integer(periodTypeConceptId)
   omopgenerics::assertChoice(recordsFrom, choices = c(
     "drug_exposure", "condition_occurrence", "procedure_occurrence",
     "visit_occurrence", "device_exposure", "measurement", "observation", "death"
-  ))
+  ), null = TRUE)
   recordsFrom <- unique(recordsFrom)
   if (!is.infinite(censorAge)) censorAge <- as.integer(censorAge)
   if (!is.infinite(collapseDays)) collapseDays <- as.integer(collapseDays)
@@ -58,6 +57,7 @@ generateObservationPeriod <- function(cdm,
   }
 
   if (length(recordsFrom) == 0) {
+    cli::cli_warn(c("!" = "`recordsFrom` is empty, empty {.pkg observation_period} created."))
     # return empty
     pid <- cdm$person |>
       utils::head(1) |>
@@ -243,4 +243,45 @@ isColDate <- function(x, col) {
     utils::head(1L) |>
     dplyr::pull() |>
     dplyr::type_sum() == "date"
+}
+validateCensorDate <- function(censorDate, cdm, call = parent.frame()) {
+  if (is.null(censorDate)) {
+    if ("cdm_source" %in% names(cdm)) {
+      cdmSource <- cdm$cdm_source |>
+        dplyr::collect()
+      if (nrow(cdmSource) == 1) {
+        candidate1 <- as.Date(cdmSource$source_release_date)
+        if (checkDate(candidate1)) {
+          censorDate <- candidate1
+          cli::cli_inform(c(i = "Using censorDate {.pkg {censorDate}} from {.emph source_release_date}."))
+        } else {
+          candidate2 <- as.Date(cdmSource$cdm_release_date)
+          if (checkDate(candidate2)) {
+            censorDate <- candidate2
+            cli::cli_inform(c(i = "Using censorDate {.pkg {censorDate}} from {.emph cdm_release_date}."))
+          }
+        }
+      }
+    }
+    if (is.null(censorDate)) {
+      censorDate <- as.Date(Sys.Date())
+      cli::cli_inform(c(i = "Using current date as censorDate: {.pkg {censorDate}}."))
+    }
+  } else {
+    censorDate <- as.Date(censorDate)
+    omopgenerics::assertDate(censorDate, length = 1, call = call)
+  }
+
+  if (censorDate > Sys.Date()) {
+    cli::cli_warn(c("!" = "Unrealistic censorDate ({censorDate}) in the future provided."))
+  }
+
+  return(censorDate)
+}
+checkDate <- function(date) {
+  check <- FALSE
+  if (inherits(date, "Date")) {
+    check <- isTRUE(date >= as.Date("1950-01-01") && date <= Sys.Date())
+  }
+  return(check)
 }
