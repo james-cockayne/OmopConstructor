@@ -51,7 +51,7 @@ pak::pkg_install("ohdsi/OmopConstructor")
 
 Currently **OmopConstructor** main functionalities are:
 
-- [`generateObservationPeriod()`](https://ohdsi.github.io/OmopConstructor/reference/generateObservationPeriod.html) to generate observation periods based on the data already in the `cdm` object.
+- [`buildObservationPeriod()`](https://ohdsi.github.io/OmopConstructor/reference/buildObservationPeriod.html) to generate observation periods based on the data already in the `cdm` object.
 
 ### Building observation periods
 
@@ -63,11 +63,11 @@ library(OmopConstructor)
 
 cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 
-cdm <- generateObservationPeriod(cdm = cdm,
-                                 collapseDays = Inf,
-                                 persistenceDays = Inf, 
-                                 censorDate = as.Date("2010-01-01"), 
-                                 censorAge = 120)
+cdm <- buildObservationPeriod(cdm = cdm,
+                              collapseDays = Inf,
+                              persistenceDays = Inf, 
+                              censorDate = as.Date("2010-01-01"), 
+                              censorAge = 120)
 cdm
 ```
 

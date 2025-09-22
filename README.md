@@ -48,7 +48,7 @@ pak::pkg_install("ohdsi/OmopConstructor")
 
 Currently **OmopConstructor** main functionalities are:
 
-- [`generateObservationPeriod()`](https://ohdsi.github.io/OmopConstructor/reference/generateObservationPeriod.html)
+- [`buildObservationPeriod()`](https://ohdsi.github.io/OmopConstructor/reference/buildObservationPeriod.html)
   to generate observation periods based on the data already in the `cdm`
   object.
 
@@ -69,12 +69,14 @@ library(OmopConstructor)
 cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 #> ℹ Reading GiBleed tables.
 #> ℹ Adding drug_strength table.
+#> ℹ Creating local <cdm_reference> object.
+#> ℹ Inserting <cdm_reference> into duckdb.
 
-cdm <- generateObservationPeriod(cdm = cdm,
-                                 collapseDays = Inf,
-                                 persistenceDays = Inf, 
-                                 censorDate = as.Date("2010-01-01"), 
-                                 censorAge = 120)
+cdm <- buildObservationPeriod(cdm = cdm,
+                              collapseDays = Inf,
+                              persistenceDays = Inf, 
+                              censorDate = as.Date("2010-01-01"), 
+                              censorAge = 120)
 cdm
 #> 
 #> ── # OMOP CDM reference (duckdb) of GiBleed ────────────────────────────────────
@@ -105,12 +107,13 @@ tableObservationPeriod(result = result, type = "flextable")
 
 ## Running
 
-Configure a `.env` configuration file using the `example.env` example settings file. Supply your JDBC driver and place it in the `drivers` directory.
+Configure a `.env` configuration file using the `example.env` example
+settings file. Supply your JDBC driver and place it in the `drivers`
+directory.
 
-```
-docker build . -t omop-constructor
+    docker build . -t omop-constructor
 
-docker run --rm --env-file=".env" --network="host" omop-constructor
-```
+    docker run --rm --env-file=".env" --network="host" omop-constructor
 
-After successful execution the `observation_period` will have been truncated and recalculated.
+After successful execution the `observation_period` will have been
+truncated and recalculated.

@@ -1,4 +1,4 @@
-test_that("test generateObservationPeriod", {
+test_that("test buildObservationPeriod", {
   collectOp <- function(x) {
     x |>
       dplyr::collect() |>
@@ -48,7 +48,7 @@ test_that("test generateObservationPeriod", {
     copyCdm()
 
   # different tables
-  expect_message(cdm <- generateObservationPeriod(
+  expect_message(cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = 0L,
     persistenceDays = 0L,
@@ -66,7 +66,7 @@ test_that("test generateObservationPeriod", {
       period_type_concept_id = 32817L
     )
   )
-  expect_message(cdm <- generateObservationPeriod(
+  expect_message(cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = 0L,
     persistenceDays = 0L,
@@ -84,7 +84,7 @@ test_that("test generateObservationPeriod", {
       period_type_concept_id = 32817L
     )
   )
-  expect_message(cdm <- generateObservationPeriod(
+  expect_message(cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = 0L,
     persistenceDays = 0L,
@@ -104,7 +104,7 @@ test_that("test generateObservationPeriod", {
   )
 
   # collapse era
-  expect_message(cdm <- generateObservationPeriod(
+  expect_message(cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = 0L,
     persistenceDays = 0L,
@@ -122,7 +122,7 @@ test_that("test generateObservationPeriod", {
       period_type_concept_id = 32817L
     )
   )
-  cdm <- generateObservationPeriod(
+  cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = 4L,
     persistenceDays = 0L,
@@ -140,7 +140,7 @@ test_that("test generateObservationPeriod", {
       period_type_concept_id = 32817L
     )
   )
-  cdm <- generateObservationPeriod(
+  cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = 5L,
     persistenceDays = 0L,
@@ -160,7 +160,7 @@ test_that("test generateObservationPeriod", {
   )
 
   # persistence window
-  cdm <- generateObservationPeriod(
+  cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = 4L,
     persistenceDays = 3L,
@@ -178,7 +178,7 @@ test_that("test generateObservationPeriod", {
       period_type_concept_id = 32817L
     )
   )
-  cdm <- generateObservationPeriod(
+  cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = 20L,
@@ -198,7 +198,7 @@ test_that("test generateObservationPeriod", {
   )
 
   # censorDate
-  cdm <- generateObservationPeriod(
+  cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = Inf,
@@ -216,7 +216,7 @@ test_that("test generateObservationPeriod", {
       period_type_concept_id = 32817L
     )
   )
-  cdm <- generateObservationPeriod(
+  cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = 930,
@@ -234,7 +234,7 @@ test_that("test generateObservationPeriod", {
       period_type_concept_id = 32817L
     )
   )
-  cdm <- generateObservationPeriod(
+  cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = Inf,
@@ -254,7 +254,7 @@ test_that("test generateObservationPeriod", {
   )
 
   # censorAge
-  expect_warning(cdm <- generateObservationPeriod(
+  expect_warning(cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = Inf,
@@ -274,7 +274,7 @@ test_that("test generateObservationPeriod", {
   )
 
   # expect error if persistence > collapse
-  expect_error(cdm <- generateObservationPeriod(
+  expect_error(cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = 180,
     persistenceDays = Inf,
@@ -282,7 +282,7 @@ test_that("test generateObservationPeriod", {
     censorAge = 70L,
     recordsFrom = c("visit_occurrence", "condition_occurrence")
   ))
-  expect_error(cdm <- generateObservationPeriod(
+  expect_error(cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = 180,
     persistenceDays = 181,
@@ -292,7 +292,7 @@ test_that("test generateObservationPeriod", {
   ))
 
   # empty recordsFrom
-  expect_warning(cdm <- generateObservationPeriod(
+  expect_warning(cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = Inf,
@@ -307,7 +307,7 @@ test_that("test generateObservationPeriod", {
       visit_start_date = clock::add_days(x = .data$visit_start_date, n = 1L),
       visit_end_date = clock::add_days(x = .data$visit_end_date, n = 1L)
     )
-  expect_no_error(cdm <- generateObservationPeriod(
+  expect_no_error(cdm <- buildObservationPeriod(
     cdm = cdm,
     collapseDays = Inf,
     persistenceDays = Inf,
@@ -336,7 +336,7 @@ test_that("back to back observation periods", {
 
   # expect two observation periods by default as visits are back to back
   expect_message(expect_message(expect_no_error(
-    cdm <- generateObservationPeriod(
+    cdm <- buildObservationPeriod(
       cdm = cdm, collapseDays = 0L, persistenceDays = 0L, censorAge = Inf,
       recordsFrom = "visit_occurrence"
     )
@@ -345,7 +345,7 @@ test_that("back to back observation periods", {
 
   # check with persistence 23 it is not collapsed
   expect_message(expect_no_error(
-    cdm <- generateObservationPeriod(
+    cdm <- buildObservationPeriod(
       cdm = cdm, collapseDays = 24L, persistenceDays = 23L, censorAge = Inf,
       recordsFrom = "visit_occurrence"
     )
@@ -354,7 +354,7 @@ test_that("back to back observation periods", {
 
   # check with persistence 24 it is collapsed
   expect_message(expect_message(expect_no_error(
-    cdm <- generateObservationPeriod(
+    cdm <- buildObservationPeriod(
       cdm = cdm, collapseDays = 24L, persistenceDays = 24L, censorAge = Inf,
       recordsFrom = "visit_occurrence"
     )
@@ -396,7 +396,7 @@ test_that("censorDate from cdm_source", {
   # expect censor at provided date
   censorDate <- as.Date("2020-01-01")
   expect_no_error(
-    cdm <- generateObservationPeriod(
+    cdm <- buildObservationPeriod(
       cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
       recordsFrom = "visit_occurrence", censorDate = censorDate
     )
@@ -409,7 +409,7 @@ test_that("censorDate from cdm_source", {
 
   # expect censor at source_release_date
   expect_message(expect_no_error(
-    cdm <- generateObservationPeriod(
+    cdm <- buildObservationPeriod(
       cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
       recordsFrom = "visit_occurrence"
     )
@@ -426,7 +426,7 @@ test_that("censorDate from cdm_source", {
 
   # expect censor at cdm_release_date
   expect_message(expect_no_error(
-    cdm <- generateObservationPeriod(
+    cdm <- buildObservationPeriod(
       cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
       recordsFrom = "visit_occurrence"
     )
@@ -443,7 +443,7 @@ test_that("censorDate from cdm_source", {
 
   # expect to censor at extract date
   expect_message(expect_no_error(
-    cdm <- generateObservationPeriod(
+    cdm <- buildObservationPeriod(
       cdm = cdm, collapseDays = Inf, persistenceDays = Inf, censorAge = Inf,
       recordsFrom = "visit_occurrence"
     )
