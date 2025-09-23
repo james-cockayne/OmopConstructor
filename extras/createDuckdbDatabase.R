@@ -9,7 +9,7 @@ cdm <- omopgenerics::insertCdmTo(cdm = cdm, to = to)
 CDMConnector::cdmDisconnect(cdm = cdm)
 
 # create env file
-loc <- file.path(getwd(), "docker", "scripts", "duckdb.env")
+loc <- file.path(getwd(), "duckdb.env")
 content <- c(
   "DB_SERVER=gibleed.duckdb",
   "DBMS=duckdb",
@@ -19,5 +19,3 @@ content <- c(
   "collapseDays=180"
 )
 writeLines(text = content, con = loc)
-
-print(list.files(file.path(getwd(), "docker", "scripts")))
