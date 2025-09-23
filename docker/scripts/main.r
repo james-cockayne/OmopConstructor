@@ -3,12 +3,17 @@ library(DatabaseConnector)
 library(CDMConnector)
 library(OmopConstructor)
 
-pathToDriver <- tempdir()
+# path to drivers
+pathToDriver <- file.path(getwd(), "drivers")
+dir.create(path = pathToDriver)
 
-downloadJdbcDrivers(dbms = Sys.getenv("DBMS"), pathToDriver = pathToDriver)
+dbms <- Sys.getenv("DBMS")
+if (dbms %in% c("postgresql", "redshift", "sql server", "oracle", "pdw", "snowflake", "spark", "bigquery", "iris")) {
+  downloadJdbcDrivers(dbms = dbms, pathToDriver = pathToDriver)
+}
 
 connectionDetails <- createConnectionDetails(
-  dbms = Sys.getenv("DBMS"),
+  dbms = dbms,
   user = Sys.getenv("DB_USER"),
   password = Sys.getenv("DB_PASSWORD"),
   server = Sys.getenv("DB_SERVER"),
