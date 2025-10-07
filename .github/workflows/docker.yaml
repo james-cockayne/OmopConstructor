@@ -54,6 +54,10 @@ jobs:
       - name: Check R + package load
         run: |
           docker run --rm \
+            -e DB_SERVER=gibleed.duckdb \
             -e DBMS=duckdb \
-            -e SERVER=gibleed.duckdb \
+            -e CDM_SCHEMA=cdm \
+            -e RESULTS_SCHEMA=main \
+            -e persistenceDays=180 \
+            -e collapseDays=180 \
             omop-constructor:ci
