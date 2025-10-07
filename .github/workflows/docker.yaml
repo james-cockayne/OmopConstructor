@@ -53,4 +53,7 @@ jobs:
       # check docker was created successfully
       - name: Check R + package load
         run: |
-          docker run --rm --env-file="duckdb.env" --network="host" omop-constructor:ci
+          docker run --rm \
+            -e DBMS=duckdb \
+            -e SERVER=:memory: \
+            omop-constructor:ci
