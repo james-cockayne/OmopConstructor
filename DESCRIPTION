@@ -27,7 +27,7 @@ Imports:
     clock,
     dplyr,
     glue,
-    omopgenerics,
+    omopgenerics (>= 1.4.2),
     PatientProfiles,
     purrr,
     rlang
